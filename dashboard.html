@@ -378,7 +378,15 @@
     function renderDashboard() {
       // Renderizar cards de status atual
       const statsGrid = document.getElementById('statsGrid');
+      const timeline = document.getElementById('timeline');
+      
+      if (!statsGrid || !timeline) {
+        console.error('Elementos do DOM não encontrados');
+        return;
+      }
+      
       statsGrid.innerHTML = '';
+      timeline.innerHTML = '';
 
       // Ordenar VMix por número
       const vmixNumbers = Object.keys(vmixStatus).sort((a, b) => {
@@ -388,10 +396,10 @@
       });
 
       if (vmixNumbers.length === 0) {
-        document.getElementById('dashboardContent').innerHTML = `
-          <div class="empty-state">
-            <h2>📭 Nenhum registro encontrado</h2>
-            <p>Quando houver entregas registradas, elas aparecerão aqui.</p>
+        statsGrid.innerHTML = `
+          <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #666;">
+            <h2 style="font-size: 2rem; margin-bottom: 15px; color: #999;">📭 Nenhum registro encontrado</h2>
+            <p style="font-size: 1.1rem;">Quando houver entregas registradas, elas aparecerão aqui.</p>
           </div>
         `;
         return;
@@ -410,10 +418,6 @@
         `;
         statsGrid.appendChild(card);
       });
-
-      // Renderizar timeline
-      const timeline = document.getElementById('timeline');
-      timeline.innerHTML = '';
 
       // Mostrar até 20 registros mais recentes
       const recentRecords = allRecords.slice(0, 20);
