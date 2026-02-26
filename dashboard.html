@@ -10,8 +10,8 @@
 
     body {
       font-family: 'DM Sans', -apple-system, sans-serif;
-      background: #0f1117;
-      color: #e1e4ea;
+      background: #f0f2f7;
+      color: #333;
       min-height: 100vh;
     }
 
@@ -19,10 +19,9 @@
     .sidebar {
       position: fixed;
       left: 0; top: 0;
-      width: 72px;
+      width: 68px;
       height: 100vh;
-      background: #16181f;
-      border-right: 1px solid rgba(255,255,255,0.06);
+      background: #1e2235;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -33,7 +32,7 @@
     .sidebar-logo {
       width: 40px;
       height: 40px;
-      background: linear-gradient(135deg, #4a6cf7, #6366f1);
+      background: linear-gradient(135deg, #4a6cf7, #7c5cfc);
       border-radius: 10px;
       display: flex;
       align-items: center;
@@ -47,7 +46,7 @@
     .sidebar-nav {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
     }
 
     .sidebar-btn {
@@ -56,7 +55,7 @@
       border-radius: 10px;
       border: none;
       background: transparent;
-      color: #5a5e6b;
+      color: rgba(255,255,255,0.35);
       font-size: 1.15rem;
       cursor: pointer;
       display: flex;
@@ -66,35 +65,33 @@
     }
 
     .sidebar-btn:hover, .sidebar-btn.active {
-      background: rgba(74,108,247,0.12);
-      color: #4a6cf7;
+      background: rgba(74,108,247,0.18);
+      color: #fff;
     }
 
-    /* === Main content === */
+    /* === Main === */
     .main {
-      margin-left: 72px;
+      margin-left: 68px;
       padding: 28px 32px 40px;
       min-height: 100vh;
     }
 
-    /* === Top bar === */
+    /* === Topbar === */
     .topbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 32px;
+      margin-bottom: 28px;
     }
 
     .topbar h1 {
       font-size: 1.5rem;
       font-weight: 700;
-      color: #fff;
+      color: #1e2235;
       letter-spacing: -0.02em;
     }
 
-    .topbar h1 span {
-      color: #4a6cf7;
-    }
+    .topbar h1 span { color: #4a6cf7; }
 
     .topbar-right {
       display: flex;
@@ -104,14 +101,14 @@
 
     .last-update {
       font-size: 0.8rem;
-      color: #5a5e6b;
+      color: #8b90a0;
     }
 
     .btn-refresh {
       padding: 9px 18px;
-      background: rgba(74,108,247,0.12);
-      color: #4a6cf7;
-      border: 1px solid rgba(74,108,247,0.2);
+      background: #4a6cf7;
+      color: #fff;
+      border: none;
       border-radius: 8px;
       font-size: 0.85rem;
       font-weight: 600;
@@ -121,11 +118,12 @@
       display: flex;
       align-items: center;
       gap: 6px;
+      box-shadow: 0 2px 8px rgba(74,108,247,0.25);
     }
 
     .btn-refresh:hover {
-      background: rgba(74,108,247,0.2);
-      border-color: rgba(74,108,247,0.4);
+      background: #3b5de7;
+      box-shadow: 0 4px 14px rgba(74,108,247,0.35);
     }
 
     .btn-refresh.loading svg {
@@ -143,15 +141,16 @@
     }
 
     .summary-card {
-      background: #16181f;
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 12px;
-      padding: 20px;
+      background: #fff;
+      border: 1px solid #e4e7f0;
+      border-radius: 14px;
+      padding: 20px 22px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
     }
 
     .summary-card .sc-label {
-      font-size: 0.78rem;
-      color: #5a5e6b;
+      font-size: 0.76rem;
+      color: #8b90a0;
       text-transform: uppercase;
       letter-spacing: 0.06em;
       font-weight: 600;
@@ -162,27 +161,30 @@
       font-family: 'JetBrains Mono', monospace;
       font-size: 1.8rem;
       font-weight: 700;
-      color: #fff;
+      color: #1e2235;
     }
 
     .summary-card .sc-sub {
       font-size: 0.8rem;
-      color: #5a5e6b;
+      color: #8b90a0;
       margin-top: 4px;
     }
 
     .summary-card.highlight {
-      background: linear-gradient(135deg, rgba(74,108,247,0.15), rgba(99,102,241,0.08));
-      border-color: rgba(74,108,247,0.25);
+      background: linear-gradient(135deg, #4a6cf7, #7c5cfc);
+      border: none;
+      box-shadow: 0 4px 16px rgba(74,108,247,0.3);
     }
 
-    .summary-card.highlight .sc-value { color: #4a6cf7; }
+    .summary-card.highlight .sc-label { color: rgba(255,255,255,0.7); }
+    .summary-card.highlight .sc-value { color: #fff; }
+    .summary-card.highlight .sc-sub { color: rgba(255,255,255,0.6); }
 
-    /* === VMix Status Grid === */
+    /* === Section titles === */
     .section-title {
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 700;
-      color: #fff;
+      color: #1e2235;
       margin-bottom: 16px;
       display: flex;
       align-items: center;
@@ -196,6 +198,7 @@
       background: #4a6cf7;
     }
 
+    /* === VMix Grid === */
     .vmix-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -204,13 +207,14 @@
     }
 
     .vmix-card {
-      background: #16181f;
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 12px;
+      background: #fff;
+      border: 1px solid #e4e7f0;
+      border-radius: 14px;
       padding: 20px;
       transition: all 0.2s;
       position: relative;
       overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
     }
 
     .vmix-card::before {
@@ -219,7 +223,7 @@
       top: 0; left: 0;
       width: 100%;
       height: 3px;
-      background: linear-gradient(90deg, #4a6cf7, #6366f1);
+      background: linear-gradient(90deg, #4a6cf7, #7c5cfc);
       opacity: 0;
       transition: opacity 0.2s;
     }
@@ -227,8 +231,9 @@
     .vmix-card:hover::before { opacity: 1; }
 
     .vmix-card:hover {
-      border-color: rgba(74,108,247,0.2);
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+      border-color: rgba(74,108,247,0.3);
+      box-shadow: 0 6px 20px rgba(74,108,247,0.1);
+      transform: translateY(-2px);
     }
 
     .vmix-card-top {
@@ -240,9 +245,9 @@
 
     .vmix-card .vmix-number {
       font-family: 'JetBrains Mono', monospace;
-      font-size: 1.3rem;
+      font-size: 1.25rem;
       font-weight: 700;
-      color: #fff;
+      color: #1e2235;
     }
 
     .status-pill {
@@ -258,21 +263,21 @@
     }
 
     .status-pill.in-use {
-      background: rgba(34,197,94,0.12);
-      color: #22c55e;
+      background: rgba(34,197,94,0.1);
+      color: #16a34a;
     }
 
     .status-pill.in-use .pulse {
       width: 6px;
       height: 6px;
       border-radius: 50%;
-      background: #22c55e;
+      background: #16a34a;
       animation: pulse 2s infinite;
     }
 
     @keyframes pulse {
       0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
+      50% { opacity: 0.3; }
     }
 
     .vmix-card .info-row {
@@ -284,49 +289,43 @@
     }
 
     .vmix-card .info-row .icon {
-      color: #5a5e6b;
+      color: #8b90a0;
       font-size: 0.8rem;
       width: 16px;
       text-align: center;
     }
 
-    .vmix-card .info-row .val {
-      color: #c4c8d4;
-    }
-
-    .vmix-card .info-row .val.company {
-      color: #fff;
-      font-weight: 600;
-    }
+    .vmix-card .info-row .val { color: #5a5e70; }
+    .vmix-card .info-row .val.company { color: #1e2235; font-weight: 600; }
 
     .vmix-card .card-date {
       margin-top: 12px;
       padding-top: 12px;
-      border-top: 1px solid rgba(255,255,255,0.06);
+      border-top: 1px solid #f0f1f5;
       font-size: 0.78rem;
-      color: #5a5e6b;
+      color: #8b90a0;
     }
 
     /* === History Section === */
     .history-section {
-      background: #16181f;
-      border: 1px solid rgba(255,255,255,0.06);
+      background: #fff;
+      border: 1px solid #e4e7f0;
       border-radius: 14px;
       overflow: hidden;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.04);
     }
 
     .history-header {
-      padding: 22px 24px;
+      padding: 22px 24px 0;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
     }
 
     .history-header h2 {
-      font-size: 1.05rem;
+      font-size: 1rem;
       font-weight: 700;
-      color: #fff;
+      color: #1e2235;
       display: flex;
       align-items: center;
       gap: 8px;
@@ -342,18 +341,21 @@
     /* Tabs */
     .vmix-tabs {
       display: flex;
-      gap: 4px;
+      gap: 2px;
       padding: 16px 24px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      border-bottom: 1px solid #e4e7f0;
       overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
     }
 
+    .vmix-tabs::-webkit-scrollbar { height: 0; }
+
     .vmix-tab {
-      padding: 10px 18px;
+      padding: 10px 16px;
       background: transparent;
       border: none;
-      color: #5a5e6b;
-      font-size: 0.85rem;
+      color: #8b90a0;
+      font-size: 0.84rem;
       font-weight: 600;
       font-family: 'DM Sans', sans-serif;
       cursor: pointer;
@@ -364,9 +366,7 @@
       bottom: -1px;
     }
 
-    .vmix-tab:hover {
-      color: #c4c8d4;
-    }
+    .vmix-tab:hover { color: #4a6cf7; }
 
     .vmix-tab.active {
       color: #4a6cf7;
@@ -381,22 +381,18 @@
       height: 18px;
       padding: 0 5px;
       border-radius: 9px;
-      background: rgba(255,255,255,0.06);
+      background: #f0f1f5;
       font-size: 0.7rem;
-      margin-left: 6px;
+      color: #8b90a0;
+      margin-left: 5px;
     }
 
     .vmix-tab.active .tab-count {
-      background: rgba(74,108,247,0.2);
+      background: rgba(74,108,247,0.12);
       color: #4a6cf7;
     }
 
     /* Table */
-    .history-table-wrap {
-      padding: 0;
-      overflow-x: auto;
-    }
-
     .history-table {
       width: 100%;
       border-collapse: collapse;
@@ -405,73 +401,55 @@
     .history-table thead th {
       padding: 14px 24px;
       text-align: left;
-      font-size: 0.75rem;
+      font-size: 0.73rem;
       font-weight: 600;
-      color: #5a5e6b;
+      color: #8b90a0;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      background: rgba(255,255,255,0.02);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
+      background: #fafbfc;
+      border-bottom: 1px solid #e4e7f0;
       white-space: nowrap;
     }
 
     .history-table tbody tr {
-      border-bottom: 1px solid rgba(255,255,255,0.04);
+      border-bottom: 1px solid #f0f1f5;
       transition: background 0.15s;
     }
 
-    .history-table tbody tr:last-child {
-      border-bottom: none;
-    }
+    .history-table tbody tr:last-child { border-bottom: none; }
 
-    .history-table tbody tr:hover {
-      background: rgba(74,108,247,0.04);
-    }
+    .history-table tbody tr:hover { background: #f8f9fd; }
 
     .history-table tbody td {
       padding: 14px 24px;
       font-size: 0.88rem;
     }
 
-    .history-table .td-index {
+    .td-index {
       font-family: 'JetBrains Mono', monospace;
       font-size: 0.78rem;
-      color: #5a5e6b;
+      color: #b0b4c0;
       width: 40px;
     }
 
-    .history-table .td-date {
-      color: #8b8fa3;
+    .td-date {
+      color: #8b90a0;
       font-size: 0.84rem;
       white-space: nowrap;
     }
 
-    .history-table .td-company {
-      color: #fff;
+    .td-company {
+      color: #1e2235;
       font-weight: 600;
     }
 
-    .history-table .td-receiver {
-      color: #c4c8d4;
-    }
+    .td-receiver { color: #5a5e70; }
 
-    .history-table .td-vmix {
+    .td-vmix {
       font-family: 'JetBrains Mono', monospace;
       font-weight: 600;
       color: #4a6cf7;
       font-size: 0.84rem;
-    }
-
-    .transfer-direction {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.84rem;
-    }
-
-    .transfer-direction .arrow {
-      color: #4a6cf7;
-      font-size: 0.7rem;
     }
 
     /* Show more */
@@ -482,10 +460,10 @@
 
     .btn-show-more {
       padding: 8px 20px;
-      background: rgba(74,108,247,0.1);
+      background: #f0f2f7;
       color: #4a6cf7;
-      border: 1px solid rgba(74,108,247,0.2);
-      border-radius: 6px;
+      border: 1px solid #e4e7f0;
+      border-radius: 8px;
       font-size: 0.82rem;
       font-weight: 600;
       font-family: 'DM Sans', sans-serif;
@@ -494,10 +472,11 @@
     }
 
     .btn-show-more:hover {
-      background: rgba(74,108,247,0.2);
+      background: rgba(74,108,247,0.08);
+      border-color: rgba(74,108,247,0.3);
     }
 
-    /* Empty / Loading states */
+    /* States */
     .state-message {
       display: flex;
       flex-direction: column;
@@ -507,27 +486,12 @@
       text-align: center;
     }
 
-    .state-message .icon {
-      font-size: 2.5rem;
-      margin-bottom: 16px;
-      opacity: 0.4;
-    }
-
-    .state-message h2 {
-      color: #fff;
-      font-size: 1.2rem;
-      margin-bottom: 8px;
-    }
-
-    .state-message p {
-      color: #5a5e6b;
-      font-size: 0.92rem;
-    }
+    .state-message p { color: #8b90a0; font-size: 0.92rem; }
 
     .spinner-ring {
       width: 36px;
       height: 36px;
-      border: 3px solid rgba(255,255,255,0.06);
+      border: 3px solid #e4e7f0;
       border-top-color: #4a6cf7;
       border-radius: 50%;
       animation: spin 0.8s linear infinite;
@@ -535,20 +499,18 @@
     }
 
     .error-box {
-      background: rgba(239,68,68,0.1);
-      border: 1px solid rgba(239,68,68,0.2);
+      background: rgba(239,68,68,0.06);
+      border: 1px solid rgba(239,68,68,0.15);
       border-radius: 10px;
       padding: 20px 24px;
-      color: #f87171;
+      color: #dc2626;
       text-align: center;
       font-size: 0.9rem;
     }
 
     /* === Responsive === */
     @media (max-width: 1024px) {
-      .summary-row {
-        grid-template-columns: repeat(2, 1fr);
-      }
+      .summary-row { grid-template-columns: repeat(2, 1fr); }
     }
 
     @media (max-width: 768px) {
@@ -583,8 +545,6 @@
 
   <!-- Main -->
   <div class="main">
-
-    <!-- Topbar -->
     <div class="topbar">
       <h1>Dashboard <span>VMix</span></h1>
       <div class="topbar-right">
@@ -605,23 +565,19 @@
     <!-- Error -->
     <div id="errorState" style="display:none;"></div>
 
-    <!-- Dashboard content -->
+    <!-- Dashboard -->
     <div id="dashboardContent" style="display:none;">
-
-      <!-- Summary cards -->
       <div class="summary-row" id="summaryRow"></div>
 
-      <!-- VMix status grid -->
       <div class="section-title"><span class="dot"></span> Status Atual dos Equipamentos</div>
       <div class="vmix-grid" id="vmixGrid"></div>
 
-      <!-- History section -->
       <div class="history-section">
         <div class="history-header">
           <h2><span class="dot"></span> Histórico de Transferências</h2>
         </div>
         <div class="vmix-tabs" id="vmixTabs"></div>
-        <div class="history-table-wrap">
+        <div>
           <table class="history-table">
             <thead>
               <tr>
@@ -636,20 +592,19 @@
           </table>
         </div>
       </div>
-
     </div>
   </div>
 
   <script>
-    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRRWCfmrGtwYAfsvG-vAc-HFldEE13XlIToB0Na96UPV3rFVBGR4R8j316-KOCT8LHW-krYMDdzOHu4/pub?gid=964739530&single=true&output=csv';
+    var SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRRWCfmrGtwYAfsvG-vAc-HFldEE13XlIToB0Na96UPV3rFVBGR4R8j316-KOCT8LHW-krYMDdzOHu4/pub?gid=964739530&single=true&output=csv';
 
-    let vmixStatus = {};
-    let allRecords = [];
-    let activeTab = 'all';
-    let visibleCount = 10;
+    var vmixStatus = {};
+    var allRecords = [];
+    var activeTab = 'all';
+    var visibleCount = 10;
 
     async function loadData() {
-      const btn = document.getElementById('btnRefresh');
+      var btn = document.getElementById('btnRefresh');
       btn.classList.add('loading');
 
       try {
@@ -657,17 +612,17 @@
         document.getElementById('dashboardContent').style.display = 'none';
         document.getElementById('errorState').style.display = 'none';
 
-        const response = await fetch(SHEET_CSV_URL);
-        const csvText = await response.text();
+        var response = await fetch(SHEET_CSV_URL);
+        var csvText = await response.text();
 
-        const lines = csvText.trim().split('\n');
+        var lines = csvText.trim().split('\n');
         allRecords = [];
         vmixStatus = {};
 
-        for (let i = 1; i < lines.length; i++) {
-          const values = parseCSVLine(lines[i]);
+        for (var i = 1; i < lines.length; i++) {
+          var values = parseCSVLine(lines[i]);
           if (values.length >= 4) {
-            const record = {
+            var record = {
               dataHora: values[0],
               empresa: values[1],
               recebedor: values[2],
@@ -679,7 +634,9 @@
           }
         }
 
-        allRecords.sort((a, b) => new Date(parseDate(b.dataHora)) - new Date(parseDate(a.dataHora)));
+        allRecords.sort(function(a, b) {
+          return parseDate(b.dataHora) - parseDate(a.dataHora);
+        });
 
         activeTab = 'all';
         visibleCount = 10;
@@ -692,7 +649,7 @@
       } catch (error) {
         console.error('Erro:', error);
         document.getElementById('loadingState').style.display = 'none';
-        document.getElementById('errorState').innerHTML = `<div class="error-box">Erro ao carregar dados. Verifique se a planilha foi publicada como CSV.<br><small style="opacity:0.7;margin-top:6px;display:inline-block;">${error.message}</small></div>`;
+        document.getElementById('errorState').innerHTML = '<div class="error-box">Erro ao carregar dados. Verifique se a planilha foi publicada como CSV.<br><small style="opacity:0.7;margin-top:6px;display:inline-block;">' + error.message + '</small></div>';
         document.getElementById('errorState').style.display = 'block';
       } finally {
         btn.classList.remove('loading');
@@ -700,24 +657,25 @@
     }
 
     function parseCSVLine(line) {
-      const result = [];
-      let current = '';
-      let inQuotes = false;
-      for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        if (char === '"') { inQuotes = !inQuotes; }
-        else if (char === ',' && !inQuotes) { result.push(current.trim()); current = ''; }
-        else { current += char; }
+      var result = [];
+      var current = '';
+      var inQuotes = false;
+      for (var i = 0; i < line.length; i++) {
+        var ch = line[i];
+        if (ch === '"') { inQuotes = !inQuotes; }
+        else if (ch === ',' && !inQuotes) { result.push(current.trim()); current = ''; }
+        else { current += ch; }
       }
       result.push(current.trim());
       return result;
     }
 
     function parseDate(dateStr) {
-      const parts = dateStr.split(' ');
-      const d = parts[0].split('/');
-      const t = parts[1]?.split(':') || ['00','00','00'];
-      return new Date(d[2], d[1]-1, d[0], t[0], t[1], t[2]);
+      if (!dateStr) return new Date(0);
+      var parts = dateStr.split(' ');
+      var d = parts[0].split('/');
+      var t = (parts[1] || '00:00:00').split(':');
+      return new Date(d[2], d[1] - 1, d[0], t[0] || 0, t[1] || 0, t[2] || 0);
     }
 
     function renderDashboard() {
@@ -728,82 +686,101 @@
     }
 
     function renderSummary() {
-      const vmixKeys = Object.keys(vmixStatus);
-      const uniqueCompanies = [...new Set(vmixKeys.map(k => vmixStatus[k].empresa))];
+      var vmixKeys = Object.keys(vmixStatus);
+      var companies = {};
+      vmixKeys.forEach(function(k) { companies[vmixStatus[k].empresa] = true; });
+      var uniqueCount = Object.keys(companies).length;
 
-      document.getElementById('summaryRow').innerHTML = `
-        <div class="summary-card highlight">
-          <div class="sc-label">Total VMix</div>
-          <div class="sc-value">${vmixKeys.length}</div>
-          <div class="sc-sub">equipamentos rastreados</div>
-        </div>
-        <div class="summary-card">
-          <div class="sc-label">Em Uso</div>
-          <div class="sc-value">${vmixKeys.length}</div>
-          <div class="sc-sub">atualmente alocados</div>
-        </div>
-        <div class="summary-card">
-          <div class="sc-label">Empresas</div>
-          <div class="sc-value">${uniqueCompanies.length}</div>
-          <div class="sc-sub">parceiras ativas</div>
-        </div>
-        <div class="summary-card">
-          <div class="sc-label">Transferências</div>
-          <div class="sc-value">${allRecords.length}</div>
-          <div class="sc-sub">registros no total</div>
-        </div>
-      `;
+      document.getElementById('summaryRow').innerHTML =
+        '<div class="summary-card highlight">' +
+          '<div class="sc-label">Total VMix</div>' +
+          '<div class="sc-value">' + vmixKeys.length + '</div>' +
+          '<div class="sc-sub">equipamentos rastreados</div>' +
+        '</div>' +
+        '<div class="summary-card">' +
+          '<div class="sc-label">Em Uso</div>' +
+          '<div class="sc-value">' + vmixKeys.length + '</div>' +
+          '<div class="sc-sub">atualmente alocados</div>' +
+        '</div>' +
+        '<div class="summary-card">' +
+          '<div class="sc-label">Empresas</div>' +
+          '<div class="sc-value">' + uniqueCount + '</div>' +
+          '<div class="sc-sub">parceiras ativas</div>' +
+        '</div>' +
+        '<div class="summary-card">' +
+          '<div class="sc-label">Transferências</div>' +
+          '<div class="sc-value">' + allRecords.length + '</div>' +
+          '<div class="sc-sub">registros no total</div>' +
+        '</div>';
     }
 
     function renderVmixGrid() {
-      const grid = document.getElementById('vmixGrid');
-      const vmixKeys = Object.keys(vmixStatus).sort((a,b) => {
-        return parseInt(a.replace(/\D/g,'')) - parseInt(b.replace(/\D/g,''));
+      var grid = document.getElementById('vmixGrid');
+      var vmixKeys = Object.keys(vmixStatus).sort(function(a, b) {
+        return parseInt(a.replace(/\D/g, '')) - parseInt(b.replace(/\D/g, ''));
       });
 
       if (vmixKeys.length === 0) {
-        grid.innerHTML = `<div class="state-message" style="grid-column:1/-1;padding:40px;"><p>Nenhum equipamento registrado ainda.</p></div>`;
+        grid.innerHTML = '<div class="state-message" style="grid-column:1/-1;padding:40px;"><p>Nenhum equipamento registrado ainda.</p></div>';
         return;
       }
 
-      grid.innerHTML = vmixKeys.map(key => {
-        const r = vmixStatus[key];
-        return `
-          <div class="vmix-card">
-            <div class="vmix-card-top">
-              <div class="vmix-number">${r.vmix}</div>
-              <div class="status-pill in-use"><span class="pulse"></span> Em uso</div>
-            </div>
-            <div class="info-row">
-              <span class="icon">🏢</span>
-              <span class="val company">${r.empresa}</span>
-            </div>
-            <div class="info-row">
-              <span class="icon">👤</span>
-              <span class="val">${r.recebedor}</span>
-            </div>
-            <div class="card-date">Desde ${r.dataHora}</div>
-          </div>
-        `;
-      }).join('');
+      var html = '';
+      vmixKeys.forEach(function(key) {
+        var r = vmixStatus[key];
+        html +=
+          '<div class="vmix-card">' +
+            '<div class="vmix-card-top">' +
+              '<div class="vmix-number">' + r.vmix + '</div>' +
+              '<div class="status-pill in-use"><span class="pulse"></span> Em uso</div>' +
+            '</div>' +
+            '<div class="info-row">' +
+              '<span class="icon">🏢</span>' +
+              '<span class="val company">' + r.empresa + '</span>' +
+            '</div>' +
+            '<div class="info-row">' +
+              '<span class="icon">👤</span>' +
+              '<span class="val">' + r.recebedor + '</span>' +
+            '</div>' +
+            '<div class="card-date">Desde ' + r.dataHora + '</div>' +
+          '</div>';
+      });
+      grid.innerHTML = html;
     }
 
     function renderTabs() {
-      const recordsByVmix = {};
-      allRecords.forEach(r => {
+      var recordsByVmix = {};
+      allRecords.forEach(function(r) {
         if (!recordsByVmix[r.vmix]) recordsByVmix[r.vmix] = [];
         recordsByVmix[r.vmix].push(r);
       });
 
-      const sortedKeys = Object.keys(recordsByVmix).sort((a,b) => parseInt(a.replace(/\D/g,'')) - parseInt(b.replace(/\D/g,'')));
-
-      let tabsHTML = `<button class="vmix-tab ${activeTab === 'all' ? 'active' : ''}" onclick="switchTab('all')">Todos<span class="tab-count">${allRecords.length}</span></button>`;
-
-      sortedKeys.forEach(key => {
-        tabsHTML += `<button class="vmix-tab ${activeTab === key ? 'active' : ''}" onclick="switchTab('${key}')">${key}<span class="tab-count">${recordsByVmix[key].length}</span></button>`;
+      var sortedKeys = Object.keys(recordsByVmix).sort(function(a, b) {
+        return parseInt(a.replace(/\D/g, '')) - parseInt(b.replace(/\D/g, ''));
       });
 
-      document.getElementById('vmixTabs').innerHTML = tabsHTML;
+      var container = document.getElementById('vmixTabs');
+      container.innerHTML = '';
+
+      // Tab "Todos"
+      var allBtn = document.createElement('button');
+      allBtn.className = 'vmix-tab' + (activeTab === 'all' ? ' active' : '');
+      allBtn.innerHTML = 'Todos<span class="tab-count">' + allRecords.length + '</span>';
+      allBtn.addEventListener('click', function() {
+        switchTab('all');
+      });
+      container.appendChild(allBtn);
+
+      // Tabs por VMix
+      sortedKeys.forEach(function(key) {
+        var btn = document.createElement('button');
+        btn.className = 'vmix-tab' + (activeTab === key ? ' active' : '');
+        btn.innerHTML = key + '<span class="tab-count">' + recordsByVmix[key].length + '</span>';
+        btn.addEventListener('click', function() {
+          switchTab(key);
+        });
+        container.appendChild(btn);
+      });
     }
 
     function switchTab(tab) {
@@ -814,45 +791,64 @@
     }
 
     function renderHistory() {
-      const filtered = activeTab === 'all'
-        ? allRecords
-        : allRecords.filter(r => r.vmix === activeTab);
-
-      const toShow = filtered.slice(0, visibleCount);
-      const hasMore = filtered.length > visibleCount;
-
-      let html = toShow.map((r, i) => `
-        <tr>
-          <td class="td-index">${String(i + 1).padStart(2, '0')}</td>
-          <td class="td-date">${r.dataHora}</td>
-          <td class="td-company">${r.empresa}</td>
-          <td class="td-receiver">${r.recebedor}</td>
-          <td class="td-vmix">${r.vmix}</td>
-        </tr>
-      `).join('');
-
-      if (hasMore) {
-        html += `
-          <tr class="show-more-row">
-            <td colspan="5">
-              <button class="btn-show-more" onclick="showMore()">
-                Mostrar mais (${filtered.length - visibleCount} restantes)
-              </button>
-            </td>
-          </tr>
-        `;
+      var filtered;
+      if (activeTab === 'all') {
+        filtered = allRecords;
+      } else {
+        filtered = allRecords.filter(function(r) { return r.vmix === activeTab; });
       }
+
+      var toShow = filtered.slice(0, visibleCount);
+      var hasMore = filtered.length > visibleCount;
+      var remaining = filtered.length - visibleCount;
+
+      var tbody = document.getElementById('historyBody');
+      tbody.innerHTML = '';
 
       if (filtered.length === 0) {
-        html = `<tr><td colspan="5" style="text-align:center;padding:40px;color:#5a5e6b;">Nenhum registro encontrado.</td></tr>`;
+        var emptyRow = document.createElement('tr');
+        var emptyTd = document.createElement('td');
+        emptyTd.colSpan = 5;
+        emptyTd.style.textAlign = 'center';
+        emptyTd.style.padding = '40px';
+        emptyTd.style.color = '#8b90a0';
+        emptyTd.textContent = 'Nenhum registro encontrado.';
+        emptyRow.appendChild(emptyTd);
+        tbody.appendChild(emptyRow);
+        return;
       }
 
-      document.getElementById('historyBody').innerHTML = html;
-    }
+      toShow.forEach(function(r, i) {
+        var tr = document.createElement('tr');
+        tr.innerHTML =
+          '<td class="td-index">' + String(i + 1).padStart(2, '0') + '</td>' +
+          '<td class="td-date">' + r.dataHora + '</td>' +
+          '<td class="td-company">' + r.empresa + '</td>' +
+          '<td class="td-receiver">' + r.recebedor + '</td>' +
+          '<td class="td-vmix">' + r.vmix + '</td>';
+        tbody.appendChild(tr);
+      });
 
-    function showMore() {
-      visibleCount += 20;
-      renderHistory();
+      if (hasMore) {
+        var moreRow = document.createElement('tr');
+        moreRow.className = 'show-more-row';
+        var moreTd = document.createElement('td');
+        moreTd.colSpan = 5;
+        moreTd.style.textAlign = 'center';
+        moreTd.style.padding = '16px 24px';
+
+        var moreBtn = document.createElement('button');
+        moreBtn.className = 'btn-show-more';
+        moreBtn.textContent = 'Mostrar mais (' + remaining + ' restantes)';
+        moreBtn.addEventListener('click', function() {
+          visibleCount += 20;
+          renderHistory();
+        });
+
+        moreTd.appendChild(moreBtn);
+        moreRow.appendChild(moreTd);
+        tbody.appendChild(moreRow);
+      }
     }
 
     // Init
