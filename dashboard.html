@@ -109,6 +109,34 @@
       font-size: 1.8rem;
     }
 
+    .vmix-history-section {
+      margin-bottom: 35px;
+      padding-bottom: 35px;
+      border-bottom: 2px solid #f0f0f0;
+    }
+
+    .vmix-history-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .vmix-history-title {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #667eea;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .vmix-history-count {
+      font-size: 0.9rem;
+      font-weight: 400;
+      color: #999;
+    }
+
     .timeline {
       position: relative;
       padding-left: 40px;
@@ -250,10 +278,10 @@
       <!-- Status atual de cada VMix -->
       <div id="statsGrid" class="stats-grid"></div>
 
-      <!-- Histórico de transferências -->
+      <!-- Histórico de transferências por VMix -->
       <div class="timeline-section">
-        <h2>📜 Histórico de Transferências</h2>
-        <div id="timeline" class="timeline"></div>
+        <h2>📜 Histórico de Transferências por VMix</h2>
+        <div id="historyContainer"></div>
       </div>
     </div>
   </div>
@@ -378,15 +406,15 @@
     function renderDashboard() {
       // Renderizar cards de status atual
       const statsGrid = document.getElementById('statsGrid');
-      const timeline = document.getElementById('timeline');
+      const historyContainer = document.getElementById('historyContainer');
       
-      if (!statsGrid || !timeline) {
+      if (!statsGrid || !historyContainer) {
         console.error('Elementos do DOM não encontrados');
         return;
       }
       
       statsGrid.innerHTML = '';
-      timeline.innerHTML = '';
+      historyContainer.innerHTML = '';
 
       // Ordenar VMix por número
       const vmixNumbers = Object.keys(vmixStatus).sort((a, b) => {
@@ -419,21 +447,62 @@
         statsGrid.appendChild(card);
       });
 
-      // Mostrar até 20 registros mais recentes
-      const recentRecords = allRecords.slice(0, 20);
+      // Agrupar registros por VMix
+      const recordsByVmix = {};
+      allRecords.forEach(record => {
+        if (!recordsByVmix[record.vmix]) {
+          recordsByVmix[record.vmix] = [];
+        }
+        recordsByVmix[record.vmix].push(record);
+      });
 
-      recentRecords.forEach(record => {
-        const item = document.createElement('div');
-        item.className = 'timeline-item';
-        item.innerHTML = `
-          <div class="timeline-content">
-            <div class="timeline-date">📅 ${record.dataHora}</div>
-            <div class="timeline-vmix">${record.vmix}</div>
-            <div class="timeline-company">🏢 ${record.empresa}</div>
-            <div class="timeline-receiver">👤 ${record.recebedor}</div>
-          </div>
+      // Ordenar as chaves (VMix 1, VMix 2, etc.)
+      const sortedVmixKeys = Object.keys(recordsByVmix).sort((a, b) => {
+        const numA = parseInt(a.replace(/\D/g, ''));
+        const numB = parseInt(b.replace(/\D/g, ''));
+        return numA - numB;
+      });
+
+      // Renderizar histórico por VMix
+      sortedVmixKeys.forEach(vmixKey => {
+        const records = recordsByVmix[vmixKey];
+        
+        // Ordenar registros deste VMix por data (mais recente primeiro)
+        records.sort((a, b) => {
+          return new Date(parseDate(b.dataHora)) - new Date(parseDate(a.dataHora));
+        });
+
+        // Criar seção para este VMix
+        const section = document.createElement('div');
+        section.className = 'vmix-history-section';
+        
+        const title = document.createElement('div');
+        title.className = 'vmix-history-title';
+        title.innerHTML = `
+          ${vmixKey}
+          <span class="vmix-history-count">(${records.length} transferência${records.length > 1 ? 's' : ''})</span>
         `;
-        timeline.appendChild(item);
+        section.appendChild(title);
+
+        // Criar timeline para este VMix
+        const timeline = document.createElement('div');
+        timeline.className = 'timeline';
+
+        records.forEach(record => {
+          const item = document.createElement('div');
+          item.className = 'timeline-item';
+          item.innerHTML = `
+            <div class="timeline-content">
+              <div class="timeline-date">📅 ${record.dataHora}</div>
+              <div class="timeline-company">🏢 ${record.empresa}</div>
+              <div class="timeline-receiver">👤 ${record.recebedor}</div>
+            </div>
+          `;
+          timeline.appendChild(item);
+        });
+
+        section.appendChild(timeline);
+        historyContainer.appendChild(section);
       });
     }
 
