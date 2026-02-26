@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registro de Entrega - VMix</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f0f2f5;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      padding: 40px;
+      width: 100%;
+      max-width: 560px;
+    }
+
+    h1 {
+      text-align: center;
+      color: #1a1a2e;
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #666;
+      font-size: 0.9rem;
+      margin-bottom: 30px;
+    }
+
+    .form-group { margin-bottom: 20px; }
+
+    label {
+      display: block;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 6px;
+      font-size: 0.95rem;
+    }
+
+    label .required { color: #e74c3c; }
+
+    input[type="text"],
+    select {
+      width: 100%;
+      padding: 12px 14px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: border-color 0.2s;
+      outline: none;
+      background: #fafafa;
+    }
+
+    input[type="text"]:focus,
+    select:focus {
+      border-color: #4a90d9;
+      background: #fff;
+    }
+
+    /* === C\00e2mera === */
+    .camera-section {
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #000;
+    }
+
+    .camera-view {
+      width: 100%;
+      display: block;
+      background: #1a1a2e;
+    }
+
+    .camera-controls {
+      display: flex;
+      gap: 10px;
+      padding: 12px;
+      background: #1a1a2e;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .btn-capture {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      border: 4px solid #fff;
+      background: #e74c3c;
+      cursor: pointer;
+      transition: transform 0.15s;
+    }
+
+    .btn-capture:hover { transform: scale(1.1); }
+    .btn-capture:active { transform: scale(0.95); background: #c0392b; }
+
+    .btn-camera-action {
+      padding: 8px 14px;
+      background: rgba(255,255,255,0.15);
+      color: #fff;
+      border: 1px solid rgba(255,255,255,0.3);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    .btn-start-camera {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      background: #1a1a2e;
+      border: 2px dashed #444;
+      border-radius: 8px;
+      cursor: pointer;
+      color: #aaa;
+      text-align: center;
+      gap: 10px;
+      transition: all 0.2s;
+    }
+
+    .btn-start-camera:hover {
+      border-color: #4a90d9;
+      color: #4a90d9;
+    }
+
+    .btn-start-camera .cam-icon { font-size: 2.5rem; }
+
+    /* === Fotos capturadas === */
+    .photos-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .photo-thumb {
+      position: relative;
+      width: 90px;
+      height: 90px;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+
+    .photo-thumb img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .photo-thumb .remove-photo {
+      position: absolute;
+      top: 4px; right: 4px;
+      width: 22px; height: 22px;
+      background: rgba(231,76,60,0.9);
+      color: #fff;
+      border: none;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .photo-count {
+      font-size: 0.85rem;
+      color: #666;
+      margin-top: 6px;
+    }
+
+    /* === Bot\00f5es === */
+    .btn-submit {
+      width: 100%;
+      padding: 14px;
+      background: #4a90d9;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      margin-top: 10px;
+    }
+
+    .btn-submit:hover { background: #357abd; }
+    .btn-submit:disabled { background: #aaa; cursor: not-allowed; }
+
+    /* === Loading overlay === */
+    .loading-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(255,255,255,0.85);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 15px;
+    }
+
+    .loading-overlay.show { display: flex; }
+
+    .spinner {
+      width: 45px; height: 45px;
+      border: 5px solid #e0e0e0;
+      border-top-color: #4a90d9;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .loading-text { color: #555; font-size: 1rem; }
+
+    /* === Sucesso === */
+    .success-message {
+      display: none;
+      text-align: center;
+      padding: 30px 20px;
+    }
+
+    .success-message .check-icon { font-size: 3.5rem; margin-bottom: 15px; }
+    .success-message h2 { color: #27ae60; margin-bottom: 10px; }
+    .success-message p { color: #666; margin-bottom: 8px; font-size: 0.95rem; }
+
+    .success-message .detail {
+      background: #f8f9fa;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 15px 0;
+      text-align: left;
+    }
+
+    .success-message .detail p { margin-bottom: 4px; font-size: 0.9rem; }
+    .success-message .detail strong { color: #333; }
+
+    .btn-new {
+      padding: 12px 30px;
+      background: #4a90d9;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    .btn-new:hover { background: #357abd; }
+
+    #captureCanvas { display: none; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div id="formSection">
+      <h1>Registro de Entrega</h1>
+      <p class="subtitle">Preencha os dados da entrega do VMix</p>
+
+      <form id="vmixForm">
+        <div class="form-group">
+          <label>Empresa <span class="required">*</span></label>
+          <select id="empresa" required>
+            <option value="">Selecione a empresa</option>
+            <option value="Multivídeo">Multivídeo</option>
+            <option value="kapta">kapta</option>
+            <option value="eptv">eptv</option>
+            <option value="Contra Ataque">Contra Ataque</option>
+            <option value="RA Produções">RA Produções</option>
+            <option value="TVClube">TVClube</option>
+            <option value="PW Video">PW Video</option>
+            <option value="CromaMix">CromaMix</option>
+            <option value="Conecta">Conecta</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Responsável pelo recebimento <span class="required">*</span></label>
+          <input type="text" id="recebedor" placeholder="Ex: João Silva" required>
+        </div>
+
+        <div class="form-group">
+          <label>Número do VMix <span class="required">*</span></label>
+          <select id="vmix" required>
+            <option value="">Selecione o VMix</option>
+            <option value="VMix 1">VMix 1</option>
+            <option value="VMix 2">VMix 2</option>
+            <option value="VMix 3">VMix 3</option>
+            <option value="VMix 4">VMix 4</option>
+            <option value="VMix 5">VMix 5</option>
+            <option value="VMix 6">VMix 6</option>
+            <option value="VMix 7">VMix 7</option>
+            <option value="VMix 8">VMix 8</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Fotos do VMix <span class="required">*</span></label>
+
+          <!-- Bot\u00e3o para abrir c\u00e2mera -->
+          <div id="cameraStartBtn" class="btn-start-camera" onclick="startCamera()">
+            <span class="cam-icon">&#128247;</span>
+            <span>Toque para abrir a c\u00e2mera</span>
+            <small>Tire quantas fotos precisar</small>
+          </div>
+
+          <!-- C\u00e2mera ativa -->
+          <div id="cameraSection" class="camera-section" style="display:none;">
+            <video id="cameraVideo" class="camera-view" autoplay playsinline></video>
+            <div class="camera-controls">
+              <button type="button" class="btn-camera-action" onclick="switchCamera()">&#128260; Trocar</button>
+              <button type="button" class="btn-capture" onclick="capturePhoto()" title="Tirar foto"></button>
+              <button type="button" class="btn-camera-action" onclick="stopCamera()">&#10005; Fechar</button>
+            </div>
+          </div>
+
+          <!-- Grid de fotos -->
+          <div id="photosGrid" class="photos-grid"></div>
+          <p id="photoCount" class="photo-count"></p>
+        </div>
+
+        <button type="submit" class="btn-submit" id="btnSubmit">Registrar Entrega</button>
+      </form>
+    </div>
+
+    <div class="success-message" id="successSection">
+      <div class="check-icon">&#9989;</div>
+      <h2>Entrega Registrada!</h2>
+      <p>Os dados foram enviados com sucesso.</p>
+      <div class="detail" id="summaryDetail"></div>
+      <button class="btn-new" onclick="resetForm()">Novo Registro</button>
+    </div>
+  </div>
+
+  <!-- Loading -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+    <p class="loading-text">Enviando dados...</p>
+  </div>
+
+  <canvas id="captureCanvas"></canvas>
+
+  <script>
+    // =============================================================
+    // IMPORTANTE: Cole aqui a URL do seu Google Apps Script Web App
+    // Siga as instru\u00e7\u00f5es do arquivo google-apps-script.gs
+    // =============================================================
+    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyHRrZCKWmL64iMjUcL_9n6qNLG14iSPssJ2YGm1td_DBSR_voKl3HKtUfxP8DUS7dk/exec';
+
+    // ========== Estado ==========
+    let capturedPhotos = []; // base64 strings
+    let cameraStream = null;
+    let facingMode = 'environment';
+
+    // ========== C\u00e2mera ==========
+    async function startCamera() {
+      try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+          video: { facingMode: facingMode, width: { ideal: 1280 }, height: { ideal: 720 } }
+        });
+        document.getElementById('cameraVideo').srcObject = cameraStream;
+        document.getElementById('cameraStartBtn').style.display = 'none';
+        document.getElementById('cameraSection').style.display = 'block';
+      } catch (err) {
+        alert('N\u00e3o foi poss\u00edvel acessar a c\u00e2mera.\nVerifique as permiss\u00f5es do navegador.\n\nErro: ' + err.message);
+      }
+    }
+
+    function stopCamera() {
+      if (cameraStream) {
+        cameraStream.getTracks().forEach(t => t.stop());
+        cameraStream = null;
+      }
+      document.getElementById('cameraSection').style.display = 'none';
+      document.getElementById('cameraStartBtn').style.display = 'flex';
+    }
+
+    async function switchCamera() {
+      facingMode = facingMode === 'environment' ? 'user' : 'environment';
+      if (cameraStream) cameraStream.getTracks().forEach(t => t.stop());
+      await startCamera();
+    }
+
+    function capturePhoto() {
+      const video = document.getElementById('cameraVideo');
+      const canvas = document.getElementById('captureCanvas');
+      canvas.width = video.videoWidth;
+      canvas.height = video.videoHeight;
+      canvas.getContext('2d').drawImage(video, 0, 0);
+
+      capturedPhotos.push(canvas.toDataURL('image/jpeg', 0.8));
+      renderPhotoGrid();
+
+      // Flash de feedback
+      video.style.opacity = '0.3';
+      setTimeout(() => { video.style.opacity = '1'; }, 150);
+    }
+
+    function removePhoto(i) {
+      capturedPhotos.splice(i, 1);
+      renderPhotoGrid();
+    }
+
+    function renderPhotoGrid() {
+      const grid = document.getElementById('photosGrid');
+      grid.innerHTML = capturedPhotos.map((p, i) => `
+        <div class="photo-thumb">
+          <img src="${p}" alt="Foto ${i+1}">
+          <button type="button" class="remove-photo" onclick="removePhoto(${i})">&#10005;</button>
+        </div>
+      `).join('');
+
+      document.getElementById('photoCount').textContent =
+        capturedPhotos.length ? `${capturedPhotos.length} foto(s) capturada(s)` : '';
+    }
+
+    // ========== Formul\u00e1rio ==========
+    document.getElementById('vmixForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      const empresa   = document.getElementById('empresa').value.trim();
+      const recebedor = document.getElementById('recebedor').value.trim();
+      const vmix      = document.getElementById('vmix').value.trim();
+
+      if (!empresa || !recebedor || !vmix) {
+        alert('Preencha todos os campos.');
+        return;
+      }
+      if (capturedPhotos.length === 0) {
+        alert('Tire pelo menos uma foto do VMix.');
+        return;
+      }
+
+      // Parar c\u00e2mera
+      stopCamera();
+
+      // Mostrar loading
+      document.getElementById('loadingOverlay').classList.add('show');
+      document.getElementById('btnSubmit').disabled = true;
+
+      try {
+        const payload = {
+          empresa,
+          recebedor,
+          vmix,
+          fotos: capturedPhotos // base64 strings
+        };
+
+        const response = await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify(payload)
+        });
+
+        // Mostrar sucesso
+        const dataHora = new Date().toLocaleString('pt-BR');
+        document.getElementById('summaryDetail').innerHTML = `
+          <p><strong>Empresa:</strong> ${empresa}</p>
+          <p><strong>Recebedor:</strong> ${recebedor}</p>
+          <p><strong>VMix:</strong> ${vmix}</p>
+          <p><strong>Fotos:</strong> ${capturedPhotos.length} foto(s)</p>
+          <p><strong>Data/Hora:</strong> ${dataHora}</p>
+        `;
+
+        document.getElementById('formSection').style.display = 'none';
+        document.getElementById('successSection').style.display = 'block';
+
+      } catch (err) {
+        alert('Erro ao enviar. Verifique sua conex\u00e3o e tente novamente.\n\n' + err.message);
+      } finally {
+        document.getElementById('loadingOverlay').classList.remove('show');
+        document.getElementById('btnSubmit').disabled = false;
+      }
+    });
+
+    function resetForm() {
+      document.getElementById('vmixForm').reset();
+      capturedPhotos = [];
+      renderPhotoGrid();
+      document.getElementById('formSection').style.display = 'block';
+      document.getElementById('successSection').style.display = 'none';
+    }
+  </script>
+
+</body>
+</html>
