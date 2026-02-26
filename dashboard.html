@@ -110,31 +110,90 @@
     }
 
     .vmix-history-section {
-      margin-bottom: 35px;
-      padding-bottom: 35px;
-      border-bottom: 2px solid #f0f0f0;
+      margin-bottom: 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      overflow: hidden;
+      transition: all 0.3s;
     }
 
-    .vmix-history-section:last-child {
-      border-bottom: none;
-      margin-bottom: 0;
-      padding-bottom: 0;
+    .vmix-history-section:hover {
+      border-color: #667eea;
+      box-shadow: 0 2px 10px rgba(102, 126, 234, 0.1);
+    }
+
+    .vmix-history-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 20px 25px;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.3s;
+    }
+
+    .vmix-history-header:hover {
+      background: linear-gradient(135deg, #5568d3 0%, #653a8b 100%);
     }
 
     .vmix-history-title {
-      font-size: 1.4rem;
+      font-size: 1.3rem;
       font-weight: 700;
-      color: #667eea;
-      margin-bottom: 20px;
+      color: #fff;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
     .vmix-history-count {
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       font-weight: 400;
-      color: #999;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .vmix-history-toggle {
+      color: #fff;
+      font-size: 1.5rem;
+      transition: transform 0.3s;
+      user-select: none;
+    }
+
+    .vmix-history-section.collapsed .vmix-history-toggle {
+      transform: rotate(-90deg);
+    }
+
+    .vmix-history-content {
+      padding: 25px;
+      background: #fff;
+      max-height: 1000px;
+      overflow: hidden;
+      transition: max-height 0.3s ease-out, padding 0.3s;
+    }
+
+    .vmix-history-section.collapsed .vmix-history-content {
+      max-height: 0;
+      padding: 0 25px;
+    }
+
+    .show-more-btn {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin-top: 15px;
+      background: #f8f9fa;
+      border: 2px dashed #ccc;
+      border-radius: 8px;
+      color: #667eea;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      text-align: center;
+    }
+
+    .show-more-btn:hover {
+      background: #667eea;
+      color: #fff;
+      border-color: #667eea;
     }
 
     .timeline {
@@ -281,6 +340,9 @@
       <!-- Histórico de transferências por VMix -->
       <div class="timeline-section">
         <h2>📜 Histórico de Transferências por VMix</h2>
+        <p style="color: #666; margin-bottom: 20px; font-size: 0.95rem;">
+          👇 Clique em cada VMix para ver seu histórico completo
+        </p>
         <div id="historyContainer"></div>
       </div>
     </div>
@@ -474,21 +536,40 @@
 
         // Criar seção para este VMix
         const section = document.createElement('div');
-        section.className = 'vmix-history-section';
+        section.className = 'vmix-history-section collapsed';
+        section.dataset.vmix = vmixKey;
         
-        const title = document.createElement('div');
-        title.className = 'vmix-history-title';
-        title.innerHTML = `
-          ${vmixKey}
-          <span class="vmix-history-count">(${records.length} transferência${records.length > 1 ? 's' : ''})</span>
+        // Cabeçalho (clicável para expandir/colapsar)
+        const header = document.createElement('div');
+        header.className = 'vmix-history-header';
+        header.innerHTML = `
+          <div class="vmix-history-title">
+            ${vmixKey}
+            <span class="vmix-history-count">${records.length} transferência${records.length > 1 ? 's' : ''}</span>
+          </div>
+          <div class="vmix-history-toggle">▼</div>
         `;
-        section.appendChild(title);
+        
+        // Toggle ao clicar
+        header.addEventListener('click', function() {
+          section.classList.toggle('collapsed');
+        });
+        
+        section.appendChild(header);
 
-        // Criar timeline para este VMix
+        // Conteúdo (timeline)
+        const content = document.createElement('div');
+        content.className = 'vmix-history-content';
+        
         const timeline = document.createElement('div');
         timeline.className = 'timeline';
 
-        records.forEach(record => {
+        // Mostrar apenas últimas 5 transferências inicialmente
+        const initialLimit = 5;
+        const recordsToShow = records.slice(0, initialLimit);
+        const hasMore = records.length > initialLimit;
+
+        recordsToShow.forEach(record => {
           const item = document.createElement('div');
           item.className = 'timeline-item';
           item.innerHTML = `
@@ -501,7 +582,38 @@
           timeline.appendChild(item);
         });
 
-        section.appendChild(timeline);
+        content.appendChild(timeline);
+
+        // Botão "Ver mais" se houver mais registros
+        if (hasMore) {
+          const showMoreBtn = document.createElement('button');
+          showMoreBtn.className = 'show-more-btn';
+          showMoreBtn.textContent = `▼ Ver todas as ${records.length} transferências`;
+          showMoreBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            
+            // Renderizar todos os registros
+            timeline.innerHTML = '';
+            records.forEach(record => {
+              const item = document.createElement('div');
+              item.className = 'timeline-item';
+              item.innerHTML = `
+                <div class="timeline-content">
+                  <div class="timeline-date">📅 ${record.dataHora}</div>
+                  <div class="timeline-company">🏢 ${record.empresa}</div>
+                  <div class="timeline-receiver">👤 ${record.recebedor}</div>
+                </div>
+              `;
+              timeline.appendChild(item);
+            });
+            
+            // Remover botão
+            showMoreBtn.remove();
+          });
+          content.appendChild(showMoreBtn);
+        }
+
+        section.appendChild(content);
         historyContainer.appendChild(section);
       });
     }
