@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - Status dos VMix</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .header {
+      text-align: center;
+      color: #fff;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .header p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+      margin-bottom: 40px;
+    }
+
+    .vmix-card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 25px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .vmix-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
+    }
+
+    .vmix-card .vmix-number {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #667eea;
+      margin-bottom: 10px;
+    }
+
+    .vmix-card .company {
+      font-size: 1.3rem;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .vmix-card .receiver {
+      color: #666;
+      font-size: 0.95rem;
+      margin-bottom: 8px;
+    }
+
+    .vmix-card .date {
+      color: #999;
+      font-size: 0.85rem;
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
+    }
+
+    .vmix-card .status-badge {
+      display: inline-block;
+      background: #4caf50;
+      color: #fff;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 8px;
+    }
+
+    .timeline-section {
+      background: #fff;
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+      margin-bottom: 40px;
+    }
+
+    .timeline-section h2 {
+      color: #333;
+      margin-bottom: 25px;
+      font-size: 1.8rem;
+    }
+
+    .timeline {
+      position: relative;
+      padding-left: 40px;
+    }
+
+    .timeline::before {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
+    }
+
+    .timeline-item {
+      position: relative;
+      padding-bottom: 30px;
+    }
+
+    .timeline-item::before {
+      content: '';
+      position: absolute;
+      left: -32px;
+      top: 5px;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #667eea;
+      border: 3px solid #fff;
+      box-shadow: 0 0 0 3px #667eea33;
+    }
+
+    .timeline-item .timeline-content {
+      background: #f8f9fa;
+      padding: 15px 20px;
+      border-radius: 8px;
+      border-left: 3px solid #667eea;
+    }
+
+    .timeline-item .timeline-date {
+      font-size: 0.85rem;
+      color: #999;
+      margin-bottom: 5px;
+    }
+
+    .timeline-item .timeline-vmix {
+      font-weight: 600;
+      color: #667eea;
+      font-size: 1.1rem;
+    }
+
+    .timeline-item .timeline-company {
+      color: #333;
+      font-size: 1rem;
+      margin: 5px 0;
+    }
+
+    .timeline-item .timeline-receiver {
+      color: #666;
+      font-size: 0.9rem;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 50px;
+      color: #fff;
+      font-size: 1.2rem;
+    }
+
+    .error {
+      background: #f44336;
+      color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .refresh-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #667eea;
+      color: #fff;
+      border: none;
+      padding: 15px 30px;
+      border-radius: 50px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+      transition: all 0.3s;
+    }
+
+    .refresh-btn:hover {
+      background: #5568d3;
+      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: #fff;
+    }
+
+    .empty-state h2 {
+      font-size: 2rem;
+      margin-bottom: 15px;
+    }
+
+    .empty-state p {
+      font-size: 1.1rem;
+      opacity: 0.9;
+    }
+
+    @media (max-width: 768px) {
+      .header h1 { font-size: 1.8rem; }
+      .stats-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="header">
+    <h1>📊 Dashboard VMix</h1>
+    <p>Acompanhe em tempo real onde estão os equipamentos</p>
+  </div>
+
+  <div class="container">
+    <div id="loadingState" class="loading">
+      <p>🔄 Carregando dados...</p>
+    </div>
+
+    <div id="errorState" style="display: none;"></div>
+
+    <div id="dashboardContent" style="display: none;">
+      <!-- Status atual de cada VMix -->
+      <div id="statsGrid" class="stats-grid"></div>
+
+      <!-- Histórico de transferências -->
+      <div class="timeline-section">
+        <h2>📜 Histórico de Transferências</h2>
+        <div id="timeline" class="timeline"></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="refresh-btn" onclick="loadData()">🔄 Atualizar</button>
+
+  <script>
+    // ===========================================================
+    // IMPORTANTE: Você precisa publicar a planilha como CSV
+    // ===========================================================
+    // 1. Abra sua planilha no Google Sheets
+    // 2. Vá em Arquivo → Compartilhar → Publicar na Web
+    // 3. Escolha a aba "Formulario Vmix"
+    // 4. Formato: CSV
+    // 5. Copie a URL gerada e cole abaixo
+    
+    const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRRWCfmrGtwYAfsvG-vAc-HFldEE13XlIToB0Na96UPV3rFVBGR4R8j316-KOCT8LHW-krYMDdzOHu4/pub?gid=964739530&single=true&output=csv';
+    
+    // Armazena o status atual de cada VMix
+    let vmixStatus = {};
+    let allRecords = [];
+
+    async function loadData() {
+      try {
+        document.getElementById('loadingState').style.display = 'block';
+        document.getElementById('dashboardContent').style.display = 'none';
+        document.getElementById('errorState').style.display = 'none';
+
+        // Buscar dados da planilha
+        const response = await fetch(SHEET_CSV_URL);
+        const csvText = await response.text();
+        
+        // Parse CSV
+        const lines = csvText.trim().split('\n');
+        const headers = lines[0].split(',');
+        
+        allRecords = [];
+        vmixStatus = {};
+
+        // Processar cada linha (pulando o cabeçalho)
+        for (let i = 1; i < lines.length; i++) {
+          const values = parseCSVLine(lines[i]);
+          
+          if (values.length >= 4) {
+            const record = {
+              dataHora: values[0],
+              empresa: values[1],
+              recebedor: values[2],
+              vmix: values[3],
+              fotos: values[4] || ''
+            };
+            
+            allRecords.push(record);
+            
+            // Atualizar status atual (última entrega de cada VMix)
+            vmixStatus[record.vmix] = record;
+          }
+        }
+
+        // Ordenar registros por data (mais recentes primeiro)
+        allRecords.sort((a, b) => {
+          return new Date(parseDate(b.dataHora)) - new Date(parseDate(a.dataHora));
+        });
+
+        renderDashboard();
+        
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('dashboardContent').style.display = 'block';
+
+      } catch (error) {
+        console.error('Erro ao carregar dados:', error);
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('errorState').innerHTML = `
+          <div class="error">
+            ❌ Erro ao carregar dados. Verifique se a planilha foi publicada como CSV.
+            <br><br>
+            <small>${error.message}</small>
+          </div>
+        `;
+        document.getElementById('errorState').style.display = 'block';
+      }
+    }
+
+    function parseCSVLine(line) {
+      const result = [];
+      let current = '';
+      let inQuotes = false;
+      
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        
+        if (char === '"') {
+          inQuotes = !inQuotes;
+        } else if (char === ',' && !inQuotes) {
+          result.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      result.push(current.trim());
+      
+      return result;
+    }
+
+    function parseDate(dateStr) {
+      // Converte "DD/MM/YYYY HH:MM:SS" para objeto Date
+      const parts = dateStr.split(' ');
+      const dateParts = parts[0].split('/');
+      const timeParts = parts[1]?.split(':') || ['00', '00', '00'];
+      
+      return new Date(
+        dateParts[2], // ano
+        dateParts[1] - 1, // mês (0-11)
+        dateParts[0], // dia
+        timeParts[0], // hora
+        timeParts[1], // minuto
+        timeParts[2] // segundo
+      );
+    }
+
+    function renderDashboard() {
+      // Renderizar cards de status atual
+      const statsGrid = document.getElementById('statsGrid');
+      statsGrid.innerHTML = '';
+
+      // Ordenar VMix por número
+      const vmixNumbers = Object.keys(vmixStatus).sort((a, b) => {
+        const numA = parseInt(a.replace(/\D/g, ''));
+        const numB = parseInt(b.replace(/\D/g, ''));
+        return numA - numB;
+      });
+
+      if (vmixNumbers.length === 0) {
+        document.getElementById('dashboardContent').innerHTML = `
+          <div class="empty-state">
+            <h2>📭 Nenhum registro encontrado</h2>
+            <p>Quando houver entregas registradas, elas aparecerão aqui.</p>
+          </div>
+        `;
+        return;
+      }
+
+      vmixNumbers.forEach(vmixKey => {
+        const record = vmixStatus[vmixKey];
+        const card = document.createElement('div');
+        card.className = 'vmix-card';
+        card.innerHTML = `
+          <div class="vmix-number">${record.vmix}</div>
+          <div class="company">🏢 ${record.empresa}</div>
+          <div class="receiver">👤 ${record.recebedor}</div>
+          <div class="status-badge">EM USO</div>
+          <div class="date">📅 Desde ${record.dataHora}</div>
+        `;
+        statsGrid.appendChild(card);
+      });
+
+      // Renderizar timeline
+      const timeline = document.getElementById('timeline');
+      timeline.innerHTML = '';
+
+      // Mostrar até 20 registros mais recentes
+      const recentRecords = allRecords.slice(0, 20);
+
+      recentRecords.forEach(record => {
+        const item = document.createElement('div');
+        item.className = 'timeline-item';
+        item.innerHTML = `
+          <div class="timeline-content">
+            <div class="timeline-date">📅 ${record.dataHora}</div>
+            <div class="timeline-vmix">${record.vmix}</div>
+            <div class="timeline-company">🏢 ${record.empresa}</div>
+            <div class="timeline-receiver">👤 ${record.recebedor}</div>
+          </div>
+        `;
+        timeline.appendChild(item);
+      });
+    }
+
+    // Carregar dados ao abrir a página
+    loadData();
+
+    // Atualizar automaticamente a cada 5 minutos
+    setInterval(loadData, 5 * 60 * 1000);
+  </script>
+
+</body>
+</html>
