@@ -4,389 +4,668 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard - Status dos VMix</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      background: #0f1117;
+      color: #e1e4ea;
       min-height: 100vh;
-      padding: 20px;
     }
 
-    .header {
-      text-align: center;
-      color: #fff;
-      margin-bottom: 40px;
+    /* === Sidebar === */
+    .sidebar {
+      position: fixed;
+      left: 0; top: 0;
+      width: 72px;
+      height: 100vh;
+      background: #16181f;
+      border-right: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px 0;
+      z-index: 100;
     }
 
-    .header h1 {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    }
-
-    .header p {
-      font-size: 1.1rem;
-      opacity: 0.9;
-    }
-
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-    }
-
-    .stats-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      margin-bottom: 40px;
-    }
-
-    .vmix-card {
-      background: #fff;
-      border-radius: 12px;
-      padding: 25px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-      transition: transform 0.2s, box-shadow 0.2s;
-    }
-
-    .vmix-card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-    }
-
-    .vmix-card .vmix-number {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #667eea;
-      margin-bottom: 10px;
-    }
-
-    .vmix-card .company {
-      font-size: 1.3rem;
-      font-weight: 600;
-      color: #333;
-      margin-bottom: 8px;
-    }
-
-    .vmix-card .receiver {
-      color: #666;
-      font-size: 0.95rem;
-      margin-bottom: 8px;
-    }
-
-    .vmix-card .date {
-      color: #999;
-      font-size: 0.85rem;
-      margin-top: 12px;
-      padding-top: 12px;
-      border-top: 1px solid #eee;
-    }
-
-    .vmix-card .status-badge {
-      display: inline-block;
-      background: #4caf50;
-      color: #fff;
-      padding: 4px 12px;
-      border-radius: 20px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      margin-top: 8px;
-    }
-
-    .timeline-section {
-      background: #fff;
-      border-radius: 12px;
-      padding: 30px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-      margin-bottom: 40px;
-    }
-
-    .timeline-section h2 {
-      color: #333;
-      margin-bottom: 25px;
-      font-size: 1.8rem;
-    }
-
-    .vmix-history-section {
-      margin-bottom: 20px;
-      border: 2px solid #e0e0e0;
+    .sidebar-logo {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, #4a6cf7, #6366f1);
       border-radius: 10px;
-      overflow: hidden;
-      transition: all 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #fff;
+      margin-bottom: 32px;
     }
 
-    .vmix-history-section:hover {
-      border-color: #667eea;
-      box-shadow: 0 2px 10px rgba(102, 126, 234, 0.1);
+    .sidebar-nav {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
-    .vmix-history-header {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      padding: 20px 25px;
+    .sidebar-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      border: none;
+      background: transparent;
+      color: #5a5e6b;
+      font-size: 1.15rem;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .sidebar-btn:hover, .sidebar-btn.active {
+      background: rgba(74,108,247,0.12);
+      color: #4a6cf7;
+    }
+
+    /* === Main content === */
+    .main {
+      margin-left: 72px;
+      padding: 28px 32px 40px;
+      min-height: 100vh;
+    }
+
+    /* === Top bar === */
+    .topbar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      transition: all 0.3s;
+      margin-bottom: 32px;
     }
 
-    .vmix-history-header:hover {
-      background: linear-gradient(135deg, #5568d3 0%, #653a8b 100%);
+    .topbar h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: -0.02em;
     }
 
-    .vmix-history-title {
+    .topbar h1 span {
+      color: #4a6cf7;
+    }
+
+    .topbar-right {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .last-update {
+      font-size: 0.8rem;
+      color: #5a5e6b;
+    }
+
+    .btn-refresh {
+      padding: 9px 18px;
+      background: rgba(74,108,247,0.12);
+      color: #4a6cf7;
+      border: 1px solid rgba(74,108,247,0.2);
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-refresh:hover {
+      background: rgba(74,108,247,0.2);
+      border-color: rgba(74,108,247,0.4);
+    }
+
+    .btn-refresh.loading svg {
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* === Summary cards === */
+    .summary-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .summary-card {
+      background: #16181f;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 20px;
+    }
+
+    .summary-card .sc-label {
+      font-size: 0.78rem;
+      color: #5a5e6b;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .summary-card .sc-value {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .summary-card .sc-sub {
+      font-size: 0.8rem;
+      color: #5a5e6b;
+      margin-top: 4px;
+    }
+
+    .summary-card.highlight {
+      background: linear-gradient(135deg, rgba(74,108,247,0.15), rgba(99,102,241,0.08));
+      border-color: rgba(74,108,247,0.25);
+    }
+
+    .summary-card.highlight .sc-value { color: #4a6cf7; }
+
+    /* === VMix Status Grid === */
+    .section-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .section-title .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4a6cf7;
+    }
+
+    .vmix-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 14px;
+      margin-bottom: 36px;
+    }
+
+    .vmix-card {
+      background: #16181f;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 12px;
+      padding: 20px;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .vmix-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%;
+      height: 3px;
+      background: linear-gradient(90deg, #4a6cf7, #6366f1);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .vmix-card:hover::before { opacity: 1; }
+
+    .vmix-card:hover {
+      border-color: rgba(74,108,247,0.2);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    .vmix-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 14px;
+    }
+
+    .vmix-card .vmix-number {
+      font-family: 'JetBrains Mono', monospace;
       font-size: 1.3rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .status-pill.in-use {
+      background: rgba(34,197,94,0.12);
+      color: #22c55e;
+    }
+
+    .status-pill.in-use .pulse {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #22c55e;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .vmix-card .info-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 6px;
+      font-size: 0.88rem;
+    }
+
+    .vmix-card .info-row .icon {
+      color: #5a5e6b;
+      font-size: 0.8rem;
+      width: 16px;
+      text-align: center;
+    }
+
+    .vmix-card .info-row .val {
+      color: #c4c8d4;
+    }
+
+    .vmix-card .info-row .val.company {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .vmix-card .card-date {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+      font-size: 0.78rem;
+      color: #5a5e6b;
+    }
+
+    /* === History Section === */
+    .history-section {
+      background: #16181f;
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .history-header {
+      padding: 22px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .history-header h2 {
+      font-size: 1.05rem;
       font-weight: 700;
       color: #fff;
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
     }
 
-    .vmix-history-count {
+    .history-header h2 .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #4a6cf7;
+    }
+
+    /* Tabs */
+    .vmix-tabs {
+      display: flex;
+      gap: 4px;
+      padding: 16px 24px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      overflow-x: auto;
+    }
+
+    .vmix-tab {
+      padding: 10px 18px;
+      background: transparent;
+      border: none;
+      color: #5a5e6b;
       font-size: 0.85rem;
-      font-weight: 400;
-      color: rgba(255, 255, 255, 0.8);
-    }
-
-    .vmix-history-toggle {
-      color: #fff;
-      font-size: 1.5rem;
-      transition: transform 0.3s;
-      user-select: none;
-    }
-
-    .vmix-history-section.collapsed .vmix-history-toggle {
-      transform: rotate(-90deg);
-    }
-
-    .vmix-history-content {
-      padding: 25px;
-      background: #fff;
-      max-height: 1000px;
-      overflow: hidden;
-      transition: max-height 0.3s ease-out, padding 0.3s;
-    }
-
-    .vmix-history-section.collapsed .vmix-history-content {
-      max-height: 0;
-      padding: 0 25px;
-    }
-
-    .show-more-btn {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      margin-top: 15px;
-      background: #f8f9fa;
-      border: 2px dashed #ccc;
-      border-radius: 8px;
-      color: #667eea;
       font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.2s;
+      white-space: nowrap;
+      position: relative;
+      bottom: -1px;
+    }
+
+    .vmix-tab:hover {
+      color: #c4c8d4;
+    }
+
+    .vmix-tab.active {
+      color: #4a6cf7;
+      border-bottom-color: #4a6cf7;
+    }
+
+    .vmix-tab .tab-count {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 20px;
+      height: 18px;
+      padding: 0 5px;
+      border-radius: 9px;
+      background: rgba(255,255,255,0.06);
+      font-size: 0.7rem;
+      margin-left: 6px;
+    }
+
+    .vmix-tab.active .tab-count {
+      background: rgba(74,108,247,0.2);
+      color: #4a6cf7;
+    }
+
+    /* Table */
+    .history-table-wrap {
+      padding: 0;
+      overflow-x: auto;
+    }
+
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .history-table thead th {
+      padding: 14px 24px;
+      text-align: left;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #5a5e6b;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      background: rgba(255,255,255,0.02);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      white-space: nowrap;
+    }
+
+    .history-table tbody tr {
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+      transition: background 0.15s;
+    }
+
+    .history-table tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    .history-table tbody tr:hover {
+      background: rgba(74,108,247,0.04);
+    }
+
+    .history-table tbody td {
+      padding: 14px 24px;
+      font-size: 0.88rem;
+    }
+
+    .history-table .td-index {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      color: #5a5e6b;
+      width: 40px;
+    }
+
+    .history-table .td-date {
+      color: #8b8fa3;
+      font-size: 0.84rem;
+      white-space: nowrap;
+    }
+
+    .history-table .td-company {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .history-table .td-receiver {
+      color: #c4c8d4;
+    }
+
+    .history-table .td-vmix {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      color: #4a6cf7;
+      font-size: 0.84rem;
+    }
+
+    .transfer-direction {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.84rem;
+    }
+
+    .transfer-direction .arrow {
+      color: #4a6cf7;
+      font-size: 0.7rem;
+    }
+
+    /* Show more */
+    .show-more-row td {
+      text-align: center;
+      padding: 16px 24px !important;
+    }
+
+    .btn-show-more {
+      padding: 8px 20px;
+      background: rgba(74,108,247,0.1);
+      color: #4a6cf7;
+      border: 1px solid rgba(74,108,247,0.2);
+      border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      font-family: 'DM Sans', sans-serif;
       cursor: pointer;
       transition: all 0.2s;
+    }
+
+    .btn-show-more:hover {
+      background: rgba(74,108,247,0.2);
+    }
+
+    /* Empty / Loading states */
+    .state-message {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 20px;
       text-align: center;
     }
 
-    .show-more-btn:hover {
-      background: #667eea;
+    .state-message .icon {
+      font-size: 2.5rem;
+      margin-bottom: 16px;
+      opacity: 0.4;
+    }
+
+    .state-message h2 {
       color: #fff;
-      border-color: #667eea;
+      font-size: 1.2rem;
+      margin-bottom: 8px;
     }
 
-    .timeline {
-      position: relative;
-      padding-left: 40px;
+    .state-message p {
+      color: #5a5e6b;
+      font-size: 0.92rem;
     }
 
-    .timeline::before {
-      content: '';
-      position: absolute;
-      left: 15px;
-      top: 0;
-      bottom: 0;
-      width: 3px;
-      background: linear-gradient(180deg, #667eea 0%, #764ba2 100%);
-    }
-
-    .timeline-item {
-      position: relative;
-      padding-bottom: 30px;
-    }
-
-    .timeline-item::before {
-      content: '';
-      position: absolute;
-      left: -32px;
-      top: 5px;
-      width: 14px;
-      height: 14px;
+    .spinner-ring {
+      width: 36px;
+      height: 36px;
+      border: 3px solid rgba(255,255,255,0.06);
+      border-top-color: #4a6cf7;
       border-radius: 50%;
-      background: #667eea;
-      border: 3px solid #fff;
-      box-shadow: 0 0 0 3px #667eea33;
+      animation: spin 0.8s linear infinite;
+      margin-bottom: 16px;
     }
 
-    .timeline-item .timeline-content {
-      background: #f8f9fa;
-      padding: 15px 20px;
-      border-radius: 8px;
-      border-left: 3px solid #667eea;
-    }
-
-    .timeline-item .timeline-date {
-      font-size: 0.85rem;
-      color: #999;
-      margin-bottom: 5px;
-    }
-
-    .timeline-item .timeline-vmix {
-      font-weight: 600;
-      color: #667eea;
-      font-size: 1.1rem;
-    }
-
-    .timeline-item .timeline-company {
-      color: #333;
-      font-size: 1rem;
-      margin: 5px 0;
-    }
-
-    .timeline-item .timeline-receiver {
-      color: #666;
+    .error-box {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.2);
+      border-radius: 10px;
+      padding: 20px 24px;
+      color: #f87171;
+      text-align: center;
       font-size: 0.9rem;
     }
 
-    .loading {
-      text-align: center;
-      padding: 50px;
-      color: #fff;
-      font-size: 1.2rem;
-    }
-
-    .error {
-      background: #f44336;
-      color: #fff;
-      padding: 20px;
-      border-radius: 8px;
-      text-align: center;
-      margin: 20px 0;
-    }
-
-    .refresh-btn {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background: #667eea;
-      color: #fff;
-      border: none;
-      padding: 15px 30px;
-      border-radius: 50px;
-      font-size: 1rem;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
-      transition: all 0.3s;
-    }
-
-    .refresh-btn:hover {
-      background: #5568d3;
-      transform: scale(1.05);
-      box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 60px 20px;
-      color: #fff;
-    }
-
-    .empty-state h2 {
-      font-size: 2rem;
-      margin-bottom: 15px;
-    }
-
-    .empty-state p {
-      font-size: 1.1rem;
-      opacity: 0.9;
+    /* === Responsive === */
+    @media (max-width: 1024px) {
+      .summary-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
 
     @media (max-width: 768px) {
-      .header h1 { font-size: 1.8rem; }
-      .stats-grid { grid-template-columns: 1fr; }
+      .sidebar { display: none; }
+      .main { margin-left: 0; padding: 20px 16px 32px; }
+      .summary-row { grid-template-columns: 1fr 1fr; gap: 10px; }
+      .vmix-grid { grid-template-columns: 1fr; }
+      .topbar { flex-direction: column; align-items: flex-start; gap: 12px; }
+      .topbar-right { width: 100%; justify-content: space-between; }
+      .history-table thead th, .history-table tbody td { padding: 12px 14px; }
+    }
+
+    @media (max-width: 480px) {
+      .summary-row { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    <h1>📊 Dashboard VMix</h1>
-    <p>Acompanhe em tempo real onde estão os equipamentos</p>
-  </div>
-
-  <div class="container">
-    <div id="loadingState" class="loading">
-      <p>🔄 Carregando dados...</p>
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">V</div>
+    <div class="sidebar-nav">
+      <button class="sidebar-btn active" title="Dashboard">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      </button>
+      <button class="sidebar-btn" title="Histórico">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      </button>
     </div>
+  </nav>
 
-    <div id="errorState" style="display: none;"></div>
+  <!-- Main -->
+  <div class="main">
 
-    <div id="dashboardContent" style="display: none;">
-      <!-- Status atual de cada VMix -->
-      <div id="statsGrid" class="stats-grid"></div>
-
-      <!-- Histórico de transferências por VMix -->
-      <div class="timeline-section">
-        <h2>📜 Histórico de Transferências por VMix</h2>
-        <p style="color: #666; margin-bottom: 20px; font-size: 0.95rem;">
-          👇 Clique em cada VMix para ver seu histórico completo
-        </p>
-        <div id="historyContainer"></div>
+    <!-- Topbar -->
+    <div class="topbar">
+      <h1>Dashboard <span>VMix</span></h1>
+      <div class="topbar-right">
+        <span class="last-update" id="lastUpdate"></span>
+        <button class="btn-refresh" id="btnRefresh" onclick="loadData()">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          Atualizar
+        </button>
       </div>
     </div>
+
+    <!-- Loading -->
+    <div id="loadingState" class="state-message">
+      <div class="spinner-ring"></div>
+      <p>Carregando dados da planilha...</p>
+    </div>
+
+    <!-- Error -->
+    <div id="errorState" style="display:none;"></div>
+
+    <!-- Dashboard content -->
+    <div id="dashboardContent" style="display:none;">
+
+      <!-- Summary cards -->
+      <div class="summary-row" id="summaryRow"></div>
+
+      <!-- VMix status grid -->
+      <div class="section-title"><span class="dot"></span> Status Atual dos Equipamentos</div>
+      <div class="vmix-grid" id="vmixGrid"></div>
+
+      <!-- History section -->
+      <div class="history-section">
+        <div class="history-header">
+          <h2><span class="dot"></span> Histórico de Transferências</h2>
+        </div>
+        <div class="vmix-tabs" id="vmixTabs"></div>
+        <div class="history-table-wrap">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Data / Hora</th>
+                <th>Empresa</th>
+                <th>Responsável</th>
+                <th>Equipamento</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
   </div>
 
-  <button class="refresh-btn" onclick="loadData()">🔄 Atualizar</button>
-
   <script>
-    // ===========================================================
-    // IMPORTANTE: Você precisa publicar a planilha como CSV
-    // ===========================================================
-    // 1. Abra sua planilha no Google Sheets
-    // 2. Vá em Arquivo → Compartilhar → Publicar na Web
-    // 3. Escolha a aba "Formulario Vmix"
-    // 4. Formato: CSV
-    // 5. Copie a URL gerada e cole abaixo
-    
     const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRRWCfmrGtwYAfsvG-vAc-HFldEE13XlIToB0Na96UPV3rFVBGR4R8j316-KOCT8LHW-krYMDdzOHu4/pub?gid=964739530&single=true&output=csv';
-    
-    // Armazena o status atual de cada VMix
+
     let vmixStatus = {};
     let allRecords = [];
+    let activeTab = 'all';
+    let visibleCount = 10;
 
     async function loadData() {
+      const btn = document.getElementById('btnRefresh');
+      btn.classList.add('loading');
+
       try {
-        document.getElementById('loadingState').style.display = 'block';
+        document.getElementById('loadingState').style.display = 'flex';
         document.getElementById('dashboardContent').style.display = 'none';
         document.getElementById('errorState').style.display = 'none';
 
-        // Buscar dados da planilha
         const response = await fetch(SHEET_CSV_URL);
         const csvText = await response.text();
-        
-        // Parse CSV
+
         const lines = csvText.trim().split('\n');
-        const headers = lines[0].split(',');
-        
         allRecords = [];
         vmixStatus = {};
 
-        // Processar cada linha (pulando o cabeçalho)
         for (let i = 1; i < lines.length; i++) {
           const values = parseCSVLine(lines[i]);
-          
           if (values.length >= 4) {
             const record = {
               dataHora: values[0],
@@ -395,35 +674,28 @@
               vmix: values[3],
               fotos: values[4] || ''
             };
-            
             allRecords.push(record);
-            
-            // Atualizar status atual (última entrega de cada VMix)
             vmixStatus[record.vmix] = record;
           }
         }
 
-        // Ordenar registros por data (mais recentes primeiro)
-        allRecords.sort((a, b) => {
-          return new Date(parseDate(b.dataHora)) - new Date(parseDate(a.dataHora));
-        });
+        allRecords.sort((a, b) => new Date(parseDate(b.dataHora)) - new Date(parseDate(a.dataHora)));
 
+        activeTab = 'all';
+        visibleCount = 10;
         renderDashboard();
-        
+
         document.getElementById('loadingState').style.display = 'none';
         document.getElementById('dashboardContent').style.display = 'block';
+        document.getElementById('lastUpdate').textContent = 'Atualizado: ' + new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
 
       } catch (error) {
-        console.error('Erro ao carregar dados:', error);
+        console.error('Erro:', error);
         document.getElementById('loadingState').style.display = 'none';
-        document.getElementById('errorState').innerHTML = `
-          <div class="error">
-            ❌ Erro ao carregar dados. Verifique se a planilha foi publicada como CSV.
-            <br><br>
-            <small>${error.message}</small>
-          </div>
-        `;
+        document.getElementById('errorState').innerHTML = `<div class="error-box">Erro ao carregar dados. Verifique se a planilha foi publicada como CSV.<br><small style="opacity:0.7;margin-top:6px;display:inline-block;">${error.message}</small></div>`;
         document.getElementById('errorState').style.display = 'block';
+      } finally {
+        btn.classList.remove('loading');
       }
     }
 
@@ -431,197 +703,160 @@
       const result = [];
       let current = '';
       let inQuotes = false;
-      
       for (let i = 0; i < line.length; i++) {
         const char = line[i];
-        
-        if (char === '"') {
-          inQuotes = !inQuotes;
-        } else if (char === ',' && !inQuotes) {
-          result.push(current.trim());
-          current = '';
-        } else {
-          current += char;
-        }
+        if (char === '"') { inQuotes = !inQuotes; }
+        else if (char === ',' && !inQuotes) { result.push(current.trim()); current = ''; }
+        else { current += char; }
       }
       result.push(current.trim());
-      
       return result;
     }
 
     function parseDate(dateStr) {
-      // Converte "DD/MM/YYYY HH:MM:SS" para objeto Date
       const parts = dateStr.split(' ');
-      const dateParts = parts[0].split('/');
-      const timeParts = parts[1]?.split(':') || ['00', '00', '00'];
-      
-      return new Date(
-        dateParts[2], // ano
-        dateParts[1] - 1, // mês (0-11)
-        dateParts[0], // dia
-        timeParts[0], // hora
-        timeParts[1], // minuto
-        timeParts[2] // segundo
-      );
+      const d = parts[0].split('/');
+      const t = parts[1]?.split(':') || ['00','00','00'];
+      return new Date(d[2], d[1]-1, d[0], t[0], t[1], t[2]);
     }
 
     function renderDashboard() {
-      // Renderizar cards de status atual
-      const statsGrid = document.getElementById('statsGrid');
-      const historyContainer = document.getElementById('historyContainer');
-      
-      if (!statsGrid || !historyContainer) {
-        console.error('Elementos do DOM não encontrados');
-        return;
-      }
-      
-      statsGrid.innerHTML = '';
-      historyContainer.innerHTML = '';
-
-      // Ordenar VMix por número
-      const vmixNumbers = Object.keys(vmixStatus).sort((a, b) => {
-        const numA = parseInt(a.replace(/\D/g, ''));
-        const numB = parseInt(b.replace(/\D/g, ''));
-        return numA - numB;
-      });
-
-      if (vmixNumbers.length === 0) {
-        statsGrid.innerHTML = `
-          <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; color: #666;">
-            <h2 style="font-size: 2rem; margin-bottom: 15px; color: #999;">📭 Nenhum registro encontrado</h2>
-            <p style="font-size: 1.1rem;">Quando houver entregas registradas, elas aparecerão aqui.</p>
-          </div>
-        `;
-        return;
-      }
-
-      vmixNumbers.forEach(vmixKey => {
-        const record = vmixStatus[vmixKey];
-        const card = document.createElement('div');
-        card.className = 'vmix-card';
-        card.innerHTML = `
-          <div class="vmix-number">${record.vmix}</div>
-          <div class="company">🏢 ${record.empresa}</div>
-          <div class="receiver">👤 ${record.recebedor}</div>
-          <div class="status-badge">EM USO</div>
-          <div class="date">📅 Desde ${record.dataHora}</div>
-        `;
-        statsGrid.appendChild(card);
-      });
-
-      // Agrupar registros por VMix
-      const recordsByVmix = {};
-      allRecords.forEach(record => {
-        if (!recordsByVmix[record.vmix]) {
-          recordsByVmix[record.vmix] = [];
-        }
-        recordsByVmix[record.vmix].push(record);
-      });
-
-      // Ordenar as chaves (VMix 1, VMix 2, etc.)
-      const sortedVmixKeys = Object.keys(recordsByVmix).sort((a, b) => {
-        const numA = parseInt(a.replace(/\D/g, ''));
-        const numB = parseInt(b.replace(/\D/g, ''));
-        return numA - numB;
-      });
-
-      // Renderizar histórico por VMix
-      sortedVmixKeys.forEach(vmixKey => {
-        const records = recordsByVmix[vmixKey];
-        
-        // Ordenar registros deste VMix por data (mais recente primeiro)
-        records.sort((a, b) => {
-          return new Date(parseDate(b.dataHora)) - new Date(parseDate(a.dataHora));
-        });
-
-        // Criar seção para este VMix
-        const section = document.createElement('div');
-        section.className = 'vmix-history-section collapsed';
-        section.dataset.vmix = vmixKey;
-        
-        // Cabeçalho (clicável para expandir/colapsar)
-        const header = document.createElement('div');
-        header.className = 'vmix-history-header';
-        header.innerHTML = `
-          <div class="vmix-history-title">
-            ${vmixKey}
-            <span class="vmix-history-count">${records.length} transferência${records.length > 1 ? 's' : ''}</span>
-          </div>
-          <div class="vmix-history-toggle">▼</div>
-        `;
-        
-        // Toggle ao clicar
-        header.addEventListener('click', function() {
-          section.classList.toggle('collapsed');
-        });
-        
-        section.appendChild(header);
-
-        // Conteúdo (timeline)
-        const content = document.createElement('div');
-        content.className = 'vmix-history-content';
-        
-        const timeline = document.createElement('div');
-        timeline.className = 'timeline';
-
-        // Mostrar apenas últimas 5 transferências inicialmente
-        const initialLimit = 5;
-        const recordsToShow = records.slice(0, initialLimit);
-        const hasMore = records.length > initialLimit;
-
-        recordsToShow.forEach(record => {
-          const item = document.createElement('div');
-          item.className = 'timeline-item';
-          item.innerHTML = `
-            <div class="timeline-content">
-              <div class="timeline-date">📅 ${record.dataHora}</div>
-              <div class="timeline-company">🏢 ${record.empresa}</div>
-              <div class="timeline-receiver">👤 ${record.recebedor}</div>
-            </div>
-          `;
-          timeline.appendChild(item);
-        });
-
-        content.appendChild(timeline);
-
-        // Botão "Ver mais" se houver mais registros
-        if (hasMore) {
-          const showMoreBtn = document.createElement('button');
-          showMoreBtn.className = 'show-more-btn';
-          showMoreBtn.textContent = `▼ Ver todas as ${records.length} transferências`;
-          showMoreBtn.addEventListener('click', function(e) {
-            e.stopPropagation();
-            
-            // Renderizar todos os registros
-            timeline.innerHTML = '';
-            records.forEach(record => {
-              const item = document.createElement('div');
-              item.className = 'timeline-item';
-              item.innerHTML = `
-                <div class="timeline-content">
-                  <div class="timeline-date">📅 ${record.dataHora}</div>
-                  <div class="timeline-company">🏢 ${record.empresa}</div>
-                  <div class="timeline-receiver">👤 ${record.recebedor}</div>
-                </div>
-              `;
-              timeline.appendChild(item);
-            });
-            
-            // Remover botão
-            showMoreBtn.remove();
-          });
-          content.appendChild(showMoreBtn);
-        }
-
-        section.appendChild(content);
-        historyContainer.appendChild(section);
-      });
+      renderSummary();
+      renderVmixGrid();
+      renderTabs();
+      renderHistory();
     }
 
-    // Carregar dados ao abrir a página
-    loadData();
+    function renderSummary() {
+      const vmixKeys = Object.keys(vmixStatus);
+      const uniqueCompanies = [...new Set(vmixKeys.map(k => vmixStatus[k].empresa))];
 
-    // Atualizar automaticamente a cada 5 minutos
+      document.getElementById('summaryRow').innerHTML = `
+        <div class="summary-card highlight">
+          <div class="sc-label">Total VMix</div>
+          <div class="sc-value">${vmixKeys.length}</div>
+          <div class="sc-sub">equipamentos rastreados</div>
+        </div>
+        <div class="summary-card">
+          <div class="sc-label">Em Uso</div>
+          <div class="sc-value">${vmixKeys.length}</div>
+          <div class="sc-sub">atualmente alocados</div>
+        </div>
+        <div class="summary-card">
+          <div class="sc-label">Empresas</div>
+          <div class="sc-value">${uniqueCompanies.length}</div>
+          <div class="sc-sub">parceiras ativas</div>
+        </div>
+        <div class="summary-card">
+          <div class="sc-label">Transferências</div>
+          <div class="sc-value">${allRecords.length}</div>
+          <div class="sc-sub">registros no total</div>
+        </div>
+      `;
+    }
+
+    function renderVmixGrid() {
+      const grid = document.getElementById('vmixGrid');
+      const vmixKeys = Object.keys(vmixStatus).sort((a,b) => {
+        return parseInt(a.replace(/\D/g,'')) - parseInt(b.replace(/\D/g,''));
+      });
+
+      if (vmixKeys.length === 0) {
+        grid.innerHTML = `<div class="state-message" style="grid-column:1/-1;padding:40px;"><p>Nenhum equipamento registrado ainda.</p></div>`;
+        return;
+      }
+
+      grid.innerHTML = vmixKeys.map(key => {
+        const r = vmixStatus[key];
+        return `
+          <div class="vmix-card">
+            <div class="vmix-card-top">
+              <div class="vmix-number">${r.vmix}</div>
+              <div class="status-pill in-use"><span class="pulse"></span> Em uso</div>
+            </div>
+            <div class="info-row">
+              <span class="icon">🏢</span>
+              <span class="val company">${r.empresa}</span>
+            </div>
+            <div class="info-row">
+              <span class="icon">👤</span>
+              <span class="val">${r.recebedor}</span>
+            </div>
+            <div class="card-date">Desde ${r.dataHora}</div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderTabs() {
+      const recordsByVmix = {};
+      allRecords.forEach(r => {
+        if (!recordsByVmix[r.vmix]) recordsByVmix[r.vmix] = [];
+        recordsByVmix[r.vmix].push(r);
+      });
+
+      const sortedKeys = Object.keys(recordsByVmix).sort((a,b) => parseInt(a.replace(/\D/g,'')) - parseInt(b.replace(/\D/g,'')));
+
+      let tabsHTML = `<button class="vmix-tab ${activeTab === 'all' ? 'active' : ''}" onclick="switchTab('all')">Todos<span class="tab-count">${allRecords.length}</span></button>`;
+
+      sortedKeys.forEach(key => {
+        tabsHTML += `<button class="vmix-tab ${activeTab === key ? 'active' : ''}" onclick="switchTab('${key}')">${key}<span class="tab-count">${recordsByVmix[key].length}</span></button>`;
+      });
+
+      document.getElementById('vmixTabs').innerHTML = tabsHTML;
+    }
+
+    function switchTab(tab) {
+      activeTab = tab;
+      visibleCount = 10;
+      renderTabs();
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const filtered = activeTab === 'all'
+        ? allRecords
+        : allRecords.filter(r => r.vmix === activeTab);
+
+      const toShow = filtered.slice(0, visibleCount);
+      const hasMore = filtered.length > visibleCount;
+
+      let html = toShow.map((r, i) => `
+        <tr>
+          <td class="td-index">${String(i + 1).padStart(2, '0')}</td>
+          <td class="td-date">${r.dataHora}</td>
+          <td class="td-company">${r.empresa}</td>
+          <td class="td-receiver">${r.recebedor}</td>
+          <td class="td-vmix">${r.vmix}</td>
+        </tr>
+      `).join('');
+
+      if (hasMore) {
+        html += `
+          <tr class="show-more-row">
+            <td colspan="5">
+              <button class="btn-show-more" onclick="showMore()">
+                Mostrar mais (${filtered.length - visibleCount} restantes)
+              </button>
+            </td>
+          </tr>
+        `;
+      }
+
+      if (filtered.length === 0) {
+        html = `<tr><td colspan="5" style="text-align:center;padding:40px;color:#5a5e6b;">Nenhum registro encontrado.</td></tr>`;
+      }
+
+      document.getElementById('historyBody').innerHTML = html;
+    }
+
+    function showMore() {
+      visibleCount += 20;
+      renderHistory();
+    }
+
+    // Init
+    loadData();
     setInterval(loadData, 5 * 60 * 1000);
   </script>
 
