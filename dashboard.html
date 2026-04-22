@@ -250,6 +250,117 @@
     }
     .btn-show-more:hover { background: rgba(74,108,247,0.08); border-color: rgba(74,108,247,0.3); }
 
+    /* Update button no card */
+    .btn-update-card {
+      margin-top: 12px; width: 100%;
+      padding: 8px 12px;
+      background: #f0f2f7; color: #4a6cf7;
+      border: 1px solid #e4e7f0; border-radius: 8px;
+      font-size: 0.82rem; font-weight: 600; font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-update-card:hover { background: rgba(74,108,247,0.1); border-color: rgba(74,108,247,0.4); color: #3b5de7; }
+
+    /* Action card (add new VMix location) */
+    .vmix-card.action-card {
+      display: flex; align-items: center; justify-content: center;
+      border-style: dashed; background: #fafbfc;
+      cursor: pointer; min-height: 180px;
+    }
+    .vmix-card.action-card:hover { border-color: #4a6cf7; background: #f5f7ff; transform: translateY(-2px); }
+    .vmix-card.action-card::before { display: none; }
+    .action-content { display: flex; flex-direction: column; align-items: center; gap: 8px; color: #8b90a0; }
+    .vmix-card.action-card:hover .action-content { color: #4a6cf7; }
+    .action-content .plus { font-size: 1.6rem; font-weight: 300; line-height: 1; }
+    .action-content .label { font-size: 0.85rem; font-weight: 600; }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(30,34,53,0.55);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.show { display: flex; }
+
+    .modal {
+      background: #fff; border-radius: 14px;
+      width: 100%; max-width: 440px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      overflow: hidden;
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid #e4e7f0;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .modal-header h3 { font-size: 1rem; font-weight: 700; color: #1e2235; }
+    .modal-header .modal-close {
+      background: transparent; border: none; font-size: 1.2rem;
+      color: #8b90a0; cursor: pointer; padding: 4px 8px; line-height: 1;
+    }
+    .modal-header .modal-close:hover { color: #1e2235; }
+
+    .modal-body { padding: 22px 24px; }
+    .modal-body .form-group { margin-bottom: 16px; }
+    .modal-body label {
+      display: block; font-size: 0.82rem; font-weight: 600;
+      color: #1e2235; margin-bottom: 6px;
+    }
+    .modal-body label .required { color: #e74c3c; margin-left: 2px; }
+    .modal-body input, .modal-body select, .modal-body textarea {
+      width: 100%; padding: 10px 12px;
+      border: 1px solid #e4e7f0; border-radius: 8px;
+      font-size: 0.9rem; font-family: 'DM Sans', sans-serif;
+      background: #fafbfc; color: #333; outline: none;
+      transition: border-color 0.2s;
+    }
+    .modal-body input:focus, .modal-body select:focus, .modal-body textarea:focus {
+      border-color: #4a6cf7; background: #fff;
+    }
+    .modal-body textarea { resize: vertical; min-height: 70px; font-family: 'DM Sans', sans-serif; }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid #e4e7f0;
+      display: flex; gap: 10px; justify-content: flex-end;
+      background: #fafbfc;
+    }
+    .btn-cancel {
+      padding: 9px 18px; background: transparent;
+      color: #5a5e70; border: 1px solid #e4e7f0; border-radius: 8px;
+      font-size: 0.85rem; font-weight: 600; font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all 0.2s;
+    }
+    .btn-cancel:hover { background: #f0f2f7; }
+    .btn-save {
+      padding: 9px 18px; background: #4a6cf7; color: #fff;
+      border: none; border-radius: 8px;
+      font-size: 0.85rem; font-weight: 600; font-family: 'DM Sans', sans-serif;
+      cursor: pointer; transition: all 0.2s;
+      box-shadow: 0 2px 8px rgba(74,108,247,0.25);
+    }
+    .btn-save:hover { background: #3b5de7; }
+    .btn-save:disabled { background: #b8c4d0; cursor: not-allowed; box-shadow: none; }
+
+    .modal-toast {
+      position: fixed; top: 24px; left: 50%; transform: translateX(-50%);
+      padding: 12px 20px; border-radius: 10px;
+      font-size: 0.88rem; font-weight: 600;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+      z-index: 1100; opacity: 0; transition: opacity 0.25s, transform 0.25s;
+      pointer-events: none;
+    }
+    .modal-toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .modal-toast.success { background: #16a34a; color: #fff; }
+    .modal-toast.error { background: #dc2626; color: #fff; }
+
     /* States */
     .state-message {
       display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -308,6 +419,65 @@
         </button>
       </div>
     </div>
+
+    <!-- Modal de atualização de localização -->
+    <div class="modal-overlay" id="updateModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h3 id="modalTitle">Atualizar localização</h3>
+          <button type="button" class="modal-close" id="modalClose" aria-label="Fechar">✕</button>
+        </div>
+        <form id="updateForm">
+          <div class="modal-body">
+            <div class="form-group">
+              <label>VMix <span class="required">*</span></label>
+              <select id="modalVmix" required>
+                <option value="">Selecione o VMix</option>
+                <option value="VMix 1">VMix 1</option>
+                <option value="VMix 2">VMix 2</option>
+                <option value="VMix 3">VMix 3</option>
+                <option value="VMix 4">VMix 4</option>
+                <option value="VMix 5">VMix 5</option>
+                <option value="VMix 6">VMix 6</option>
+                <option value="VMix 7">VMix 7</option>
+                <option value="VMix 8">VMix 8</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Empresa <span class="required">*</span></label>
+              <select id="modalEmpresa" required>
+                <option value="">Selecione a empresa</option>
+                <option value="Multivídeo">Multivídeo</option>
+                <option value="kapta">Kapta</option>
+                <option value="eptv">EPTV</option>
+                <option value="Contra Ataque">Contra Ataque</option>
+                <option value="RA Produções">RA Produções</option>
+                <option value="TVClube">TV Clube</option>
+                <option value="PW Video">PW Video</option>
+                <option value="CromaMix">CromaMix</option>
+                <option value="Conecta">Conecta</option>
+                <option value="LiveMode RJ">LiveMode RJ</option>
+                <option value="LiveMode SP">LiveMode SP</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Responsável <span class="required">*</span></label>
+              <input type="text" id="modalRecebedor" placeholder="Ex: João Silva" required>
+            </div>
+            <div class="form-group">
+              <label>Observação</label>
+              <textarea id="modalObservacao" placeholder="Opcional — ex: devolvido, troca de equipe, etc."></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-cancel" id="modalCancel">Cancelar</button>
+            <button type="submit" class="btn-save" id="modalSave">Salvar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div class="modal-toast" id="modalToast"></div>
 
     <div id="loadingState" class="state-message">
       <div class="spinner-ring"></div>
@@ -374,6 +544,7 @@
 
   <script>
     var SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRRWCfmrGtwYAfsvG-vAc-HFldEE13XlIToB0Na96UPV3rFVBGR4R8j316-KOCT8LHW-krYMDdzOHu4/pub?gid=964739530&single=true&output=csv';
+    var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyNXq4ReLffd_9a3mgGog0YC_zfO1Vs3HqmzECH6wN5-jMWNQ_rdOkD_9LYdfRoBMzCcQ/exec';
 
     var vmixStatus = {};
     var allRecords = [];
@@ -420,7 +591,8 @@
               empresa: values[1],
               recebedor: values[2],
               vmix: values[3],
-              fotos: values[4] || ''
+              fotos: values[4] || '',
+              observacao: values[5] || ''
             };
             allRecords.push(record);
             vmixStatus[record.vmix] = record;
@@ -613,13 +785,17 @@
       });
 
       if (vmixKeys.length === 0) {
-        var msg = document.createElement('div');
-        msg.className = 'state-message';
-        msg.style.gridColumn = '1/-1';
-        var p = document.createElement('p');
-        p.textContent = 'Nenhum equipamento registrado ainda.';
-        msg.appendChild(p);
-        grid.appendChild(msg);
+        var emptyCard = document.createElement('div');
+        emptyCard.className = 'vmix-card action-card';
+        emptyCard.style.gridColumn = '1/-1';
+        emptyCard.addEventListener('click', function() { openUpdateModal('', '', ''); });
+        var emptyContent = document.createElement('div');
+        emptyContent.className = 'action-content';
+        var ePlus = document.createElement('div'); ePlus.className = 'plus'; ePlus.textContent = '+';
+        var eLbl = document.createElement('div'); eLbl.className = 'label'; eLbl.textContent = 'Nenhum equipamento registrado. Clique para registrar o primeiro.';
+        emptyContent.appendChild(ePlus); emptyContent.appendChild(eLbl);
+        emptyCard.appendChild(emptyContent);
+        grid.appendChild(emptyCard);
         return;
       }
 
@@ -646,10 +822,131 @@
 
         var dt = document.createElement('div'); dt.className = 'card-date'; dt.textContent = 'Desde ' + r.dataHora;
 
-        card.appendChild(top); card.appendChild(row1); card.appendChild(row2); card.appendChild(dt);
+        var btnUpdate = document.createElement('button');
+        btnUpdate.type = 'button';
+        btnUpdate.className = 'btn-update-card';
+        btnUpdate.innerHTML = '<svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg> Atualizar localização';
+        (function(vmixValue, empresaValue, recebedorValue) {
+          btnUpdate.addEventListener('click', function() {
+            openUpdateModal(vmixValue, empresaValue, recebedorValue);
+          });
+        })(r.vmix, r.empresa, r.recebedor);
+
+        card.appendChild(top); card.appendChild(row1); card.appendChild(row2); card.appendChild(dt); card.appendChild(btnUpdate);
         grid.appendChild(card);
       }
+
+      // Card de ação: registrar novo VMix / localização
+      var addCard = document.createElement('div');
+      addCard.className = 'vmix-card action-card';
+      addCard.addEventListener('click', function() { openUpdateModal('', '', ''); });
+      var addContent = document.createElement('div');
+      addContent.className = 'action-content';
+      var plus = document.createElement('div'); plus.className = 'plus'; plus.textContent = '+';
+      var lbl = document.createElement('div'); lbl.className = 'label'; lbl.textContent = 'Registrar localização';
+      addContent.appendChild(plus); addContent.appendChild(lbl);
+      addCard.appendChild(addContent);
+      grid.appendChild(addCard);
     }
+
+    // --- Modal de atualização ---
+    var modal = document.getElementById('updateModal');
+    var modalSave = document.getElementById('modalSave');
+    var modalToast = document.getElementById('modalToast');
+
+    function openUpdateModal(vmix, empresa, recebedor) {
+      document.getElementById('modalVmix').value = vmix || '';
+      document.getElementById('modalEmpresa').value = empresa || '';
+      document.getElementById('modalRecebedor').value = '';
+      document.getElementById('modalObservacao').value = '';
+      modal.classList.add('show');
+      setTimeout(function() { document.getElementById('modalRecebedor').focus(); }, 50);
+    }
+
+    function closeUpdateModal() {
+      modal.classList.remove('show');
+    }
+
+    function showToast(message, type) {
+      modalToast.textContent = message;
+      modalToast.className = 'modal-toast show ' + (type || 'success');
+      setTimeout(function() { modalToast.className = 'modal-toast'; }, 3000);
+    }
+
+    document.getElementById('modalClose').addEventListener('click', closeUpdateModal);
+    document.getElementById('modalCancel').addEventListener('click', closeUpdateModal);
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) closeUpdateModal();
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && modal.classList.contains('show')) closeUpdateModal();
+    });
+
+    document.getElementById('updateForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      var vmix = document.getElementById('modalVmix').value.trim();
+      var empresa = document.getElementById('modalEmpresa').value.trim();
+      var recebedor = document.getElementById('modalRecebedor').value.trim();
+      var observacao = document.getElementById('modalObservacao').value.trim();
+
+      if (!vmix || !empresa || !recebedor) {
+        showToast('Preencha VMix, Empresa e Responsável.', 'error');
+        return;
+      }
+
+      modalSave.disabled = true;
+      modalSave.textContent = 'Salvando...';
+
+      try {
+        await fetch(SCRIPT_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain' },
+          body: JSON.stringify({
+            empresa: empresa,
+            recebedor: recebedor,
+            vmix: vmix,
+            fotos: [],
+            origem: 'dashboard',
+            observacao: observacao
+          })
+        });
+
+        // Atualização otimista: adiciona registro localmente e re-renderiza
+        var dataHoraLocal = new Date().toLocaleString('pt-BR', {
+          day: '2-digit', month: '2-digit', year: 'numeric',
+          hour: '2-digit', minute: '2-digit', second: '2-digit'
+        }).replace(',', '');
+
+        var newRecord = {
+          dataHora: dataHoraLocal,
+          empresa: empresa,
+          recebedor: recebedor,
+          vmix: vmix,
+          fotos: '',
+          observacao: observacao
+        };
+        allRecords.unshift(newRecord);
+        vmixStatus[vmix] = newRecord;
+
+        visibleCount = 10;
+        populateFilterOptions();
+        renderDashboard();
+
+        closeUpdateModal();
+        showToast('Localização registrada!', 'success');
+
+        // Recarrega do servidor após 3s para sincronizar com a planilha
+        setTimeout(function() { loadData(); }, 3000);
+
+      } catch (err) {
+        showToast('Erro ao salvar: ' + err.message, 'error');
+      } finally {
+        modalSave.disabled = false;
+        modalSave.textContent = 'Salvar';
+      }
+    });
 
     function renderHistory() {
       var filtered = getFilteredRecords();

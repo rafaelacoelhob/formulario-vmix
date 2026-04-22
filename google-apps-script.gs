@@ -13,7 +13,7 @@
 //      (ex: https://drive.google.com/drive/folders/ESTE_É_O_ID)
 //
 // 4. Na planilha, crie os cabeçalhos na primeira linha:
-//    A1: Data/Hora | B1: Empresa | C1: Recebedor | D1: VMix | E1: Fotos
+//    A1: Data/Hora | B1: Empresa | C1: Recebedor | D1: VMix | E1: Fotos | F1: Observação
 //
 // 5. Clique em "Implantar" → "Nova implantação"
 //    - Tipo: "App da Web"
@@ -40,19 +40,21 @@ function doPost(e) {
   try {
     const data = JSON.parse(e.postData.contents);
 
-    const empresa   = data.empresa   || '';
-    const recebedor = data.recebedor || '';
-    const vmix      = data.vmix      || '';
-    const fotos     = data.fotos     || [];
+    const empresa    = data.empresa    || '';
+    const recebedor  = data.recebedor  || '';
+    const vmix       = data.vmix       || '';
+    const fotos      = data.fotos      || [];
+    const origem     = data.origem     || 'formulario';
+    const observacao = data.observacao || '';
 
     const timestamp = Utilities.formatDate(new Date(), 'America/Sao_Paulo', 'yyyy-MM-dd_HH-mm-ss');
     const fotoLinks = [];
 
-    // Salvar fotos no Google Drive (se FOLDER_ID estiver configurado)
-    if (FOLDER_ID && FOLDER_ID !== 'COLE_O_ID_DA_PASTA_DO_DRIVE_AQUI') {
+    // Salvar fotos no Google Drive (se houver fotos e FOLDER_ID estiver configurado)
+    if (fotos.length > 0 && FOLDER_ID && FOLDER_ID !== 'COLE_O_ID_DA_PASTA_DO_DRIVE_AQUI') {
       try {
         const folder = DriveApp.getFolderById(FOLDER_ID);
-        
+
         fotos.forEach(function(base64, index) {
           // Remove o prefixo "data:image/jpeg;base64,"
           const base64Data = base64.replace(/^data:image\/\w+;base64,/, '');
@@ -70,8 +72,6 @@ function doPost(e) {
         Logger.log('Erro ao salvar fotos: ' + driveError.toString());
         fotoLinks.push('ERRO: Não foi possível salvar as fotos - Verifique FOLDER_ID');
       }
-    } else {
-      fotoLinks.push('AVISO: FOLDER_ID não configurado - Fotos não foram salvas');
     }
 
     // Salvar na planilha
@@ -84,12 +84,17 @@ function doPost(e) {
 
     const dataHora = Utilities.formatDate(new Date(), 'America/Sao_Paulo', 'dd/MM/yyyy HH:mm:ss');
 
+    const observacaoFinal = origem === 'dashboard'
+      ? ('[Atualizado pelo dashboard] ' + observacao).trim()
+      : observacao;
+
     sheet.appendRow([
       dataHora,
       empresa,
       recebedor,
       vmix,
-      fotoLinks.join('\n')
+      fotoLinks.join('\n'),
+      observacaoFinal
     ]);
 
     return ContentService
