@@ -598,6 +598,48 @@ function handleKitsEmUso(ss) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
+// === HANDLER: GET DATA (todos os registros da aba KitMojo, para dashboard.html e index.html) ===
+// Retorna o mesmo shape que o front-end já monta a partir do CSV/gviz (rowToRegistro),
+// usando getDisplayValues para preservar o formato de data "dd/MM/yyyy, HH:mm:ss".
+function handleGetDataKitMojo(ss) {
+  var sheet = ss.getSheetByName('KitMojo');
+  if (!sheet) {
+    return ContentService.createTextOutput(JSON.stringify([])).setMimeType(ContentService.MimeType.JSON);
+  }
+
+  var data = sheet.getDataRange().getDisplayValues();
+  var registros = [];
+
+  for (var i = 1; i < data.length; i++) {
+    var row = data[i];
+    if (!row[0]) continue; // linha vazia
+
+    registros.push({
+      dataHora: row[0] || '',
+      tipo: row[1] || '',
+      nome1: row[2] || '',
+      nome2: row[3] || '',
+      tipoKit: row[4] || '',
+      iphone: row[5] || '',
+      android: row[6] || '',
+      portSrt: row[7] || '',
+      tipoChip: row[8] || '',
+      itensConferidos: row[9] || '',
+      itensFaltando: row[10] || '',
+      observacao: row[11] || '',
+      fotoUrl: row[12] || '',
+      local: row[13] || '',
+      solicitacaoId: row[14] || '',
+      numeroIphone: row[15] || '',
+      numeroAndroid: row[16] || ''
+    });
+  }
+
+  return ContentService
+    .createTextOutput(JSON.stringify(registros))
+    .setMimeType(ContentService.MimeType.JSON);
+}
+
 // === doGet ===
 function doGet(e) {
   try {
@@ -642,6 +684,13 @@ function doGet(e) {
     // === FORMULARIO VMIX (dados para o dashboard.html) ===
     if (action === 'formularioVmix') {
       return handleFormularioVmixDados(ss);
+    }
+
+    // === GET DATA (aba KitMojo, para dashboard.html e index.html do formulario-KitMojo) ===
+    // Substitui a leitura via gviz/CSV publicado, que dependia de compartilhamento
+    // público ("qualquer pessoa com o link") e foi bloqueada pela política de segurança.
+    if (action === 'getData') {
+      return handleGetDataKitMojo(ss);
     }
 
     return ContentService
