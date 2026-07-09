@@ -543,7 +543,7 @@
   </div>
 
   <script>
-    var PROXY_URL = 'https://vmix-proxy-eight.vercel.app/api/data';
+    var PROXY_URL = 'https://vmix-proxy-rose.vercel.app/api/data';
 
     var vmixStatus = {};
     var allRecords = [];
@@ -612,7 +612,7 @@
         errDiv.innerHTML = '';
         var box = document.createElement('div');
         box.className = 'error-box';
-        box.textContent = 'Erro ao carregar dados do Apps Script. (' + error.message + ')';
+        box.textContent = 'Erro ao carregar dados. (' + error.message + ')';
         errDiv.appendChild(box);
         errDiv.style.display = 'block';
       } finally {
