@@ -543,7 +543,7 @@
   </div>
 
   <script>
-    var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznj8BoLKw9-c_0KMxp7XeQ1diA7bBsJ1OA-_rYdAPi9zKKOUZDhn8jkDm72V0XBLZlzQ/exec';
+    var PROXY_URL = 'https://vmix-proxy-eight.vercel.app/api/data';
 
     var vmixStatus = {};
     var allRecords = [];
@@ -575,7 +575,7 @@
         document.getElementById('dashboardContent').style.display = 'none';
         document.getElementById('errorState').style.display = 'none';
 
-        var response = await fetch(SCRIPT_URL + '?action=formularioVmix');
+        var response = await fetch(PROXY_URL);
         var data = await response.json();
 
         if (data.status !== 'ok') {
@@ -878,10 +878,9 @@
       modalSave.textContent = 'Salvando...';
 
       try {
-        await fetch(SCRIPT_URL, {
+        var resp = await fetch(PROXY_URL, {
           method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain' },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             empresa: empresa,
             recebedor: recebedor,
@@ -891,6 +890,10 @@
             observacao: observacao
           })
         });
+        var respData = await resp.json();
+        if (!resp.ok || respData.status !== 'ok') {
+          throw new Error(respData.message || 'Erro desconhecido ao salvar');
+        }
 
         // Atualização otimista: adiciona registro localmente e re-renderiza
         var dataHoraLocal = new Date().toLocaleString('pt-BR', {

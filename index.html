@@ -471,7 +471,7 @@
   <canvas id="captureCanvas"></canvas>
 
   <script>
-    const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbznj8BoLKw9-c_0KMxp7XeQ1diA7bBsJ1OA-_rYdAPi9zKKOUZDhn8jkDm72V0XBLZlzQ/exec';
+    const PROXY_URL = 'https://vmix-proxy-eight.vercel.app/api/data';
 
     let capturedPhotos = [];
     let cameraStream = null;
@@ -566,12 +566,15 @@
           fotos: capturedPhotos
         };
 
-        const response = await fetch(SCRIPT_URL, {
+        const response = await fetch(PROXY_URL, {
           method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain' },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
+        const result = await response.json();
+        if (!response.ok || result.status !== 'ok') {
+          throw new Error(result.message || 'Erro desconhecido ao enviar');
+        }
 
         const dataHora = new Date().toLocaleString('pt-BR');
         document.getElementById('summaryDetail').innerHTML = `
