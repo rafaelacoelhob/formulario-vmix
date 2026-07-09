@@ -543,7 +543,6 @@
   </div>
 
   <script>
-    var SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vRRWCfmrGtwYAfsvG-vAc-HFldEE13XlIToB0Na96UPV3rFVBGR4R8j316-KOCT8LHW-krYMDdzOHu4/pub?gid=964739530&single=true&output=csv';
     var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyNXq4ReLffd_9a3mgGog0YC_zfO1Vs3HqmzECH6wN5-jMWNQ_rdOkD_9LYdfRoBMzCcQ/exec';
 
     var vmixStatus = {};
@@ -576,24 +575,19 @@
         document.getElementById('dashboardContent').style.display = 'none';
         document.getElementById('errorState').style.display = 'none';
 
-        var response = await fetch(SHEET_CSV_URL);
-        var csvText = await response.text();
-        var lines = csvText.trim().split('\n');
+        var response = await fetch(SCRIPT_URL);
+        var data = await response.json();
+
+        if (data.status !== 'ok') {
+          throw new Error(data.message || 'Erro desconhecido ao ler a planilha');
+        }
 
         allRecords = [];
         vmixStatus = {};
 
-        for (var i = 1; i < lines.length; i++) {
-          var values = parseCSVLine(lines[i]);
-          if (values.length >= 4) {
-            var record = {
-              dataHora: values[0],
-              empresa: values[1],
-              recebedor: values[2],
-              vmix: values[3],
-              fotos: values[4] || '',
-              observacao: values[5] || ''
-            };
+        for (var i = 0; i < data.records.length; i++) {
+          var record = data.records[i];
+          if (record.vmix) {
             allRecords.push(record);
             vmixStatus[record.vmix] = record;
           }
@@ -618,7 +612,7 @@
         errDiv.innerHTML = '';
         var box = document.createElement('div');
         box.className = 'error-box';
-        box.textContent = 'Erro ao carregar dados. Verifique se a planilha foi publicada como CSV. (' + error.message + ')';
+        box.textContent = 'Erro ao carregar dados do Apps Script. (' + error.message + ')';
         errDiv.appendChild(box);
         errDiv.style.display = 'block';
       } finally {
@@ -705,21 +699,6 @@
       }
 
       return filtered;
-    }
-
-    // --- CSV parse ---
-    function parseCSVLine(line) {
-      var result = [];
-      var current = '';
-      var inQuotes = false;
-      for (var i = 0; i < line.length; i++) {
-        var ch = line[i];
-        if (ch === '"') { inQuotes = !inQuotes; }
-        else if (ch === ',' && !inQuotes) { result.push(current.trim()); current = ''; }
-        else { current += ch; }
-      }
-      result.push(current.trim());
-      return result;
     }
 
     function parseDate(dateStr) {

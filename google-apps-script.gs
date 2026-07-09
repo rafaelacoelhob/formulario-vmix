@@ -110,10 +110,52 @@ function doPost(e) {
 }
 
 /**
- * Necessário para que o script aceite requisições GET (teste)
+ * Retorna os registros da planilha em JSON (usado pelo dashboard.html).
+ * Substitui a antiga leitura via "Publicar na Web" como CSV, que depende
+ * de compartilhamento público e passou a ser bloqueada pela política
+ * de segurança da LiveMode.
  */
 function doGet(e) {
-  return ContentService
-    .createTextOutput('Formulário VMix - Endpoint ativo!')
-    .setMimeType(ContentService.MimeType.TEXT);
+  try {
+    const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+    const sheet = ss.getSheetByName(SHEET_NAME);
+
+    if (!sheet) {
+      throw new Error('Aba "' + SHEET_NAME + '" não encontrada na planilha!');
+    }
+
+    const values = sheet.getDataRange().getValues();
+    const records = [];
+
+    for (let i = 1; i < values.length; i++) {
+      const row = values[i];
+      if (!row[3]) continue; // sem VMix preenchido, ignora a linha
+
+      records.push({
+        dataHora: formatCellValue(row[0]),
+        empresa: row[1] || '',
+        recebedor: row[2] || '',
+        vmix: row[3] || '',
+        fotos: row[4] || '',
+        observacao: row[5] || ''
+      });
+    }
+
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: 'ok', records: records }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (error) {
+    Logger.log('ERRO doGet: ' + error.toString());
+    return ContentService
+      .createTextOutput(JSON.stringify({ status: 'error', message: error.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+function formatCellValue(value) {
+  if (value instanceof Date) {
+    return Utilities.formatDate(value, 'America/Sao_Paulo', 'dd/MM/yyyy HH:mm:ss');
+  }
+  return value || '';
 }
