@@ -575,7 +575,7 @@
         document.getElementById('dashboardContent').style.display = 'none';
         document.getElementById('errorState').style.display = 'none';
 
-        var response = await fetch(SCRIPT_URL);
+        var response = await fetch(SCRIPT_URL + '?action=formularioVmix');
         var data = await response.json();
 
         if (data.status !== 'ok') {
